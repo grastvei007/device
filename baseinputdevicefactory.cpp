@@ -1,0 +1,2 @@
+#include "baseinputdevicefactory.h"
+
