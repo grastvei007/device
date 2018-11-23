@@ -3,6 +3,16 @@
 
 #include <stdio.h>
 
+/**
+ * @brief The Message class
+ *
+ *
+ * The message starts with <msg and ends with r> where r is a control byte.
+ * the sum of all bytes in the message modulo 256 = r.
+ * after <msg is 4 bytes that describes the size of the message, it is an int in
+ * plain text.
+ *
+ */
 class Message
 {
 public:
