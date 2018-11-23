@@ -16,6 +16,14 @@ Device::Device() :
     connect(mSerialPort.get(), &QSerialPort::readyRead, this, &Device::readData);
 }
 
+
+Device::~Device()
+{
+    emit deviceAboutToBeDestroyd(this);
+    if(mSerialPort->isOpen())
+        closeSerialPort();
+}
+
 void Device::dataRead(QByteArray aData)
 {
     qDebug() << __FUNCTION__ << "Override function to hande data read from device";

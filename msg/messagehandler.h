@@ -2,11 +2,33 @@
 #define MESSAGEHANDLER_H
 
 #include <QObject>
+#include <QByteArray>
+#include <QString>
+#include <QMap>
 
-class MessageHandler
+#include <tagsystem/tag.h>
+
+class Device;
+
+
+class MessageHandler : public QObject
 {
+    Q_OBJECT
 public:
-    MessageHandler();
+    MessageHandler(Device *aDevice);
+
+private slots:
+    void onDeviceData(QByteArray aData);
+
+private:
+    void parseData();
+
+private:
+    Device *mDevice;
+
+    QByteArray mDataBuffer;
+
+    QMap<QString, Tag*> mTags;
 };
 
 #endif // MESSAGEHANDLER_H

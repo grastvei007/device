@@ -53,7 +53,10 @@ SOURCES += \
     pidextractdevice.cpp \
     baseinputdevicefactory.cpp \
     serialdevices/bmw712smart.cpp \
-    serialdevices/oscilloscope.cpp
+    serialdevices/oscilloscope.cpp \
+    msg/messagehandlermanager.cpp \
+    msg/messagehandler.cpp \
+    msg/message.cpp
 
 HEADERS += \
         device.h \
@@ -65,7 +68,10 @@ HEADERS += \
     pidextractdevice.h \
     baseinputdevicefactory.h \
     serialdevices/bmw712smart.h \
-    serialdevices/oscilloscope.h
+    serialdevices/oscilloscope.h \
+    msg/messagehandlermanager.h \
+    msg/messagehandler.h \
+    msg/message.h
 
 unix {
     target.path = /usr/lib

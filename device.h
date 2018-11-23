@@ -18,6 +18,7 @@ class Device : public QObject
     Q_OBJECT
 public:
     Device();
+    virtual ~Device();
 
     virtual int getPid() const = 0;
     QString getPortName() const;
@@ -30,6 +31,7 @@ public:
 
 signals:
     void dataRecieved(QByteArray);
+    void deviceAboutToBeDestroyd(Device*);
 
 public slots:
     void closeSerialPort();
