@@ -106,3 +106,17 @@ void Device::pidOk()
     if(mSerialPort->isOpen())
         mSerialPort->write(QByteArray("pid ok\n"));
 }
+
+
+void Device::setDeviceName(QString aName)
+{
+    mName = aName;
+}
+
+QString Device::getDeviceName() const
+{
+    if(mName.isEmpty())
+        return getPortName();
+
+    return mName;
+}

@@ -28,6 +28,9 @@ public:
     virtual void dataRead(QByteArray aData); ///< overide to handle data
     void pidOk(); ///< send "pid ok\n" to device.
     void setOverideDataRead(bool aOveride);
+    void setDeviceName(QString aName);
+
+    QString getDeviceName() const;
 
 signals:
     void dataRecieved(QByteArray);
@@ -50,6 +53,7 @@ private:
     std::unique_ptr<QSerialPort> mSerialPort;
     bool mOverideDataReadFlag;
 
+    QString mName;
 
 };
 

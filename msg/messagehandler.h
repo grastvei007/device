@@ -21,7 +21,8 @@ private slots:
     void onDeviceData(QByteArray aData);
 
 private:
-    void parseData();
+    void parseData(QByteArray aMsg);
+    void extractMessage();
 
 private:
     Device *mDevice;

@@ -1,10 +1,10 @@
 #include "message.h"
 
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-Message::Message()
+Message::Message() :
+    mIsValid(true)
 {
     mMessageSize = 8;
     mMessage = new unsigned char[mMessageSize];
@@ -17,6 +17,18 @@ Message::Message()
     mMessage[6] = '0';
     mMessage[7] = '0'; // with place for 4 byte int value in plain text.
 
+}
+
+
+Message::Message(unsigned char *aMsg)
+{
+    mIsValid = validateMessage(aMsg);
+}
+
+
+int Message::isValid()
+{
+    return mIsValid;
 }
 
 void Message::add(char* aKey, double aValue)
@@ -118,4 +130,38 @@ void Message::calcCheckcode()
     }
 
     mMessage[mMessageSize-2] = (char)(n % 256);
+}
+
+
+int Message::validateMessage(const unsigned char *aMsg)
+{
+    int size = strlen((const char*)aMsg);
+    if(size < 8)
+        return -1;
+    if(aMsg[0] != '<' || aMsg[1] != 'm' || aMsg[2] != 's' || aMsg[3] != 'g')
+        return -2;
+
+    char buffer[4] = {0};
+    buffer[0] = aMsg[4];
+    buffer[1] = aMsg[5];
+    buffer[2] = aMsg[6];
+    buffer[3] = aMsg[7];
+
+    int msgSize = atoi(buffer);
+
+    int n = 0;
+    for(int i=0; i<msgSize; ++i)
+    {
+        if(i != msgSize-2)
+            n += aMsg[i];
+    }
+
+    int r = n % 256;
+    if( r != aMsg[msgSize-2])
+        return -3;
+
+    mMessageSize = msgSize;
+    mMessage = new unsigned char[msgSize];
+    memcpy(mMessage, aMsg, msgSize);
+    return 1;
 }

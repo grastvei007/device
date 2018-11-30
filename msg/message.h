@@ -17,6 +17,21 @@ class Message
 {
 public:
     Message();
+    Message(unsigned char *aMsg);
+
+    /**
+     * @brief isValid
+     *
+     * error codes:
+     *   1 - all good
+     *  -1 - error length
+     *  -2 - error in header
+     *  -3 - checksum error
+     *
+     *
+     * @return int an error code
+     */
+    int isValid();
 
     void add(char* aKey, double aValue);
     void add(char *aKey, float aValue);
@@ -27,10 +42,12 @@ public:
     int getMessage(unsigned char *&rMessage); ///< get the message
 private:
     void calcCheckcode();
+    int validateMessage(const unsigned char *aMsg);
 
 private:
     unsigned char *mMessage;
     size_t mMessageSize;
+    int mIsValid;
 
 };
 
