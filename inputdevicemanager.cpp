@@ -8,6 +8,14 @@
 #include "serialdevices/bmw712smart.h"
 #include "serialdevices/oscilloscope.h"
 
+
+InputDeviceManager& InputDeviceManager::sGetInstance()
+{
+    static InputDeviceManager sInputDeviceManager;
+    return sInputDeviceManager;
+}
+
+
 InputDeviceManager::InputDeviceManager() :
     mDefaultSerialPortSettings(),
     mUseDefaultSerialPortSettingFlag(false),
@@ -48,6 +56,11 @@ void InputDeviceManager::setDefaultBaudRate(BaudRate aBaudRate)
         mDefaultSerialPortSettings.setBaudRate(115200);
 }
 
+
+int InputDeviceManager::getDefaultBaudRate() const
+{
+    return mDefaultSerialPortSettings.getBaudRate();
+}
 
 void InputDeviceManager::detectInputDevices()
 {

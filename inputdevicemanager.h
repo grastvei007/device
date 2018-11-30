@@ -26,7 +26,8 @@ public:
         e38400,
         e115200
     };
-    InputDeviceManager();
+
+    static InputDeviceManager& sGetInstance();
 
     void ignoreSerialPort(QString aDeviceName);
 
@@ -34,6 +35,8 @@ public:
 
     void setUseDefaultSerialSettingFlag(bool aBool);
     void setDefaultBaudRate(BaudRate aBaudRate);
+
+    int getDefaultBaudRate() const;
 
     void connectInputDevice(QString aDeviceName);
     void connectInputDevice(QString aDeviceName, SerialPortSettings aSerialportSetting);
@@ -44,6 +47,8 @@ signals:
     void inputDeviceDisconnected(QString aDeviceName);
     void inputDeviceAvailable(QString aDeviceName);
 
+private:
+    InputDeviceManager();
 
 private slots:
     void detectInputDevices(); ///< polling
