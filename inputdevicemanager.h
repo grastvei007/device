@@ -15,7 +15,13 @@
 
 class PidExtractDevice;
 
-
+/**
+ * @brief The InputDeviceManager class
+ *
+ * Manage all serial ports available. Handle new connections and disconnection of devices
+ * from the system.
+ *
+ */
 class InputDeviceManager : public QObject
 {
     Q_OBJECT
@@ -38,8 +44,9 @@ public:
 
     int getDefaultBaudRate() const;
 
-    void connectInputDevice(QString aDeviceName);
+    void connectInputDevice(QString aDeviceName); ///< Connect to the input device
     void connectInputDevice(QString aDeviceName, SerialPortSettings aSerialportSetting);
+    void disconnectInputDevice(QString aDeviceName); ///< Disconnect an input device, and set it available.
 
     Device* getInputDevice(QString aDeviceName);
 signals:
@@ -68,6 +75,7 @@ private:
     QVector<QString> mAvailableSerialPorts;
 
     PidExtractDevice *mPidExtractDevice;
+    QTimer *mPidErrorTimer;
 };
 
 #endif // INPUTDEVICEMANAGER_H

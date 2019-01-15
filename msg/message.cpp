@@ -1,167 +1,142 @@
 #include "message.h"
 
-#include <string.h>
-#include <stdlib.h>
+#include <QDebug>
 
 Message::Message() :
     mIsValid(true)
 {
-    mMessageSize = 8;
-    mMessage = new unsigned char[mMessageSize];
-    mMessage[0] = '<';
-    mMessage[1] = 'm';
-    mMessage[2] = 's';
-    mMessage[3] = 'g';
-    mMessage[4] = '0';
-    mMessage[5] = '0';
-    mMessage[6] = '0';
-    mMessage[7] = '0'; // with place for 4 byte int value in plain text.
-
+    mMessage = "<msg0000";
 }
 
 
-Message::Message(unsigned char *aMsg)
+Message::Message(const QByteArray &aMsg)
 {
     mIsValid = validateMessage(aMsg);
 }
 
 
-int Message::isValid()
+int Message::isValid() const
 {
     return mIsValid;
 }
 
-void Message::add(char* aKey, double aValue)
+void Message::add(const QString &aKey, double aValue)
 {
 
 }
 
 
-void Message::add(char *aKey, float aValue)
+void Message::add(const QString &aKey, float aValue)
 {
-    size_t keySize = strlen(aKey);
-    char *pair = new char[keySize+6];
-
-    int t=0;
-    for(int i=0; i<keySize; ++i)
-    {
-        pair[i] = aKey[i];
-        t++;
-    }
-    pair[t++] = ':';
-    pair[t++] = 'f'; // mark value as float.
-
+    QString pair(aKey);
+    pair.append(":f");
     unsigned char bytes[4];
     memcpy(bytes, (unsigned char*) &aValue, 4);
-    pair[t++] = bytes[0];
-    pair[t++] = bytes[1];
-    pair[t++] = bytes[2];
-    pair[t++] = bytes[3];
 
-    unsigned char *temp = new unsigned char[mMessageSize+keySize+6];
-    memcpy(temp, mMessage, mMessageSize);
-    int k=0;
-    for(int i=mMessageSize; i<(mMessageSize+keySize+6); ++i)
-        temp[i] = pair[k++];
-    mMessageSize += (keySize+6);
-    delete [] mMessage;
-    mMessage = temp;
-    temp = nullptr;
+    pair.append((const char*)bytes);
+    mMessage.append(pair);
 }
 
 
-void Message::add(char* aKey, int aValue)
+void Message::add(const QString &aKey, int aValue)
 {
+    QString pair(aKey);
+    pair.append(":i");
+    unsigned char buffer[4];
+    memcpy(buffer, (unsigned char*)&aValue, 4);
+    pair.append((const char*)buffer);
+    mMessage.append(pair);
+}
 
+void Message::add(const QString &aKey, bool aValue)
+{
+    QString pair(aKey);
+    pair.append(":b");
+    pair.append(aValue ? "1" : "0");
+    mMessage.append(pair);
+}
+
+
+void Message::add(const QString &aKey, QString aValue)
+{
+    QString pair(aKey);
+    unsigned char buffer[2];
+    short s = (short)aValue.size();
+    memcpy(buffer, (unsigned char*)&s, 2);
+    pair.append(QString(":c%1%2").arg(buffer[0]).arg(buffer[1]));
+    pair.append(aValue);
+    mMessage.append(pair);
 }
 
 
 void Message::finnish()
 {
-    unsigned char *temp = new unsigned char[mMessageSize+2];
-    memcpy(temp, mMessage, mMessageSize);
-    temp[mMessageSize] = '0';
-    temp[mMessageSize+1] = '>';
-    delete [] mMessage;
-    mMessage = temp;
-    temp = nullptr;
-    mMessageSize += 2;
+    mMessage.append("0>");
+    QByteArray size = QString::number(mMessage.size()).toLatin1();
 
-    char buffer[4] = {0};
-    sprintf(buffer, "%i", (int)mMessageSize);
-    int t = strlen(buffer);
-    if(t == 1)
-         mMessage[7] = buffer[0];
-    else if(t == 2)
-    {
-        mMessage[6] = buffer[0];
-        mMessage[7] = buffer[1];
-    }
-    else if( t == 3)
-    {
-        mMessage[5] = buffer[0];
-        mMessage[6] = buffer[1];
-        mMessage[7] = buffer[2];
-    }
-    else if(t == 4)
-    {
-        for(int i=0; i<t; ++i)
-            mMessage[5+i] = buffer[i];
-    }
+    int t = size.size();
+    for(int i=t; i<4; ++i)
+        size.prepend("0");
+    qDebug() << "Message size: " << size << "t " << t;
+    if(t > 4)
+        t = 4; // some error, this message will fail.
+    mMessage.replace(4, size.size(), size);
+
     calcCheckcode();
 }
 
 
-int Message::getMessage(unsigned char *&rMessage)
+QByteArray Message::getMessage() const
 {
-    rMessage = new unsigned char[mMessageSize];
-    memcpy(rMessage, mMessage, mMessageSize);
-    return mMessageSize;
+    return mMessage;
 }
 
+
+QString Message::getAtmegaDeviceName()
+{
+
+}
 
 void Message::calcCheckcode()
 {
     int n = 0;
-    for(int i=0; i<mMessageSize; ++i)
+    for(int i=0; i<mMessage.size(); ++i)
     {
-        if(i != mMessageSize -2)
-            n += (int)mMessage[i];
+        if(i != mMessage.size() -2)
+            n += (int)mMessage.at(i);
     }
 
-    mMessage[mMessageSize-2] = (char)(n % 256);
+    mMessage[mMessage.size()-2] = (char)(n % 256);
 }
 
 
-int Message::validateMessage(const unsigned char *aMsg)
+int Message::validateMessage(const QByteArray &aMsg)
 {
-    int size = strlen((const char*)aMsg);
-    if(size < 8)
+    if(aMsg.size() < 8)
         return -1;
-    if(aMsg[0] != '<' || aMsg[1] != 'm' || aMsg[2] != 's' || aMsg[3] != 'g')
+
+    if(!aMsg.startsWith("<msg"))
+    {
         return -2;
+    }
 
-    char buffer[4] = {0};
-    buffer[0] = aMsg[4];
-    buffer[1] = aMsg[5];
-    buffer[2] = aMsg[6];
-    buffer[3] = aMsg[7];
-
-    int msgSize = atoi(buffer);
+    QString temp = aMsg.mid(4, 4);
+    int messageSize = temp.toInt();
 
     int n = 0;
-    for(int i=0; i<msgSize; ++i)
+    for(int i=0; i<messageSize; ++i)
     {
-        if(i != msgSize-2)
-            n += aMsg[i];
+        if(i != messageSize-2)
+            n += (int)aMsg.at(i);
     }
 
     int r = n % 256;
-    if( r != aMsg[msgSize-2])
+    int c = (int)aMsg[messageSize-2];
+    if(c < 0)
+        c += 256;
+    if( r != c)
         return -3;
 
-    mMessageSize = msgSize;
-    mMessage = new unsigned char[msgSize];
-    memcpy(mMessage, aMsg, msgSize);
+    mMessage = aMsg;
     return 1;
 }

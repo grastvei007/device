@@ -1,6 +1,6 @@
 #include "messagehandlermanager.h"
 
-MessageHandlerManager& MessageHandlerManager::getInstance()
+MessageHandlerManager& MessageHandlerManager::sGetInstance()
 {
     static MessageHandlerManager sMessageHandlerManager;
     return sMessageHandlerManager;

@@ -7,6 +7,7 @@
 #include "pidextractdevice.h"
 #include "serialdevices/bmw712smart.h"
 #include "serialdevices/oscilloscope.h"
+#include "serialdevices/atmega.h"
 
 
 InputDeviceManager& InputDeviceManager::sGetInstance()
@@ -20,7 +21,8 @@ InputDeviceManager::InputDeviceManager() :
     mDefaultSerialPortSettings(),
     mUseDefaultSerialPortSettingFlag(false),
     mPollingIntervalMs(1000),
-    mPidExtractDevice(nullptr)
+    mPidExtractDevice(nullptr),
+    mPidErrorTimer(nullptr)
 {
     mPollingIntervalTimer.reset(new QTimer());
     mPollingIntervalTimer->setInterval(mPollingIntervalMs);
@@ -102,7 +104,10 @@ void InputDeviceManager::detectInputDevices()
     {
         mAvailableSerialPorts.removeAll(*i);
         if(mConnectedInputDevices.contains(*i))
+        {
             mConnectedInputDevices.remove(*i);
+        }
+        emit inputDeviceDisconnected(*i);
     }
 
 }
@@ -124,12 +129,25 @@ void InputDeviceManager::connectInputDevice(QString aDeviceName)
 
     SerialPortSettings *settings = new SerialPortSettings(mDefaultSerialPortSettings);
     settings->setName(aDeviceName);
-    mPidExtractDevice= new PidExtractDevice();
+
+    // try to open an atmega
+    Atmega *atmega = new Atmega();
+    atmega->openDevice(settings);
+    mConnectedInputDevices[aDeviceName] = atmega;
+    emit inputDeviceConnected(aDeviceName);
+
+
+  /*  mPidExtractDevice= new PidExtractDevice();
     connect(mPidExtractDevice, &PidExtractDevice::pidReady, this, &InputDeviceManager::onPidReady);
     connect(mPidExtractDevice, &PidExtractDevice::errorFindingPid, this, &InputDeviceManager::onErrorFindingPid);
 
-    mPidExtractDevice->openDevice(settings);
+    if(!mPidErrorTimer)
+        mPidErrorTimer = new QTimer;
 
+   mPidErrorTimer->singleShot(5000, this, &InputDeviceManager::onErrorFindingPid);
+
+    mPidExtractDevice->openDevice(settings);
+*/
     delete settings;
 
 
@@ -139,6 +157,21 @@ void InputDeviceManager::connectInputDevice(QString aDeviceName)
 void InputDeviceManager::connectInputDevice(QString aDeviceName, SerialPortSettings aSerialportSetting)
 {
 
+}
+
+
+void InputDeviceManager::disconnectInputDevice(QString aDeviceName)
+{
+    Device *device = getInputDevice(aDeviceName);
+    if(!device)
+        return;
+    device->closeSerialPort();
+    mConnectedInputDevices[aDeviceName]->deleteLater();
+    mConnectedInputDevices[aDeviceName] = nullptr;
+    mConnectedInputDevices.remove(aDeviceName);
+    emit inputDeviceDisconnected(aDeviceName);
+    mAvailableSerialPorts.push_back(aDeviceName);
+    emit inputDeviceAvailable(aDeviceName);
 }
 
 
@@ -159,6 +192,7 @@ void InputDeviceManager::ignoreSerialPort(QString aDeviceName)
 
 void InputDeviceManager::onErrorFindingPid()
 {
+
     mPidExtractDevice->deleteLater();
     mPidExtractDevice = nullptr;
 }
@@ -166,6 +200,9 @@ void InputDeviceManager::onErrorFindingPid()
 
 void InputDeviceManager::onPidReady()
 {
+    mPidErrorTimer->deleteLater();
+    mPidErrorTimer = nullptr;
+
     int pid = mPidExtractDevice->getPid();
     QString portName = mPidExtractDevice->getPortName();
     mPidExtractDevice->pidOk();

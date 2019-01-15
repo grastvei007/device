@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QMap>
 
-#include "device.h"
+#include "../device.h"
 #include "messagehandler.h"
 
 
@@ -28,7 +28,7 @@ class MessageHandlerManager : public QObject
 {
     Q_OBJECT
 public:
-    static MessageHandlerManager& getInstance();
+    static MessageHandlerManager& sGetInstance();
 
     void createMessageHandlerForDevice(Device *aDevice);
 

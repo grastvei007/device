@@ -24,10 +24,13 @@ public:
     QString getPortName() const;
 
     void openDevice(SerialPortSettings *aSerialPortSettings);
+    void write(const QByteArray &aData); ///< Write data to serial port.
 
     virtual void dataRead(QByteArray aData); ///< overide to handle data
     void pidOk(); ///< send "pid ok\n" to device.
+
     void setOverideDataRead(bool aOveride);
+    void setDataListenFlag(bool aListen);
     void setDeviceName(QString aName);
 
     QString getDeviceName() const;
@@ -35,13 +38,13 @@ public:
 signals:
     void dataRecieved(QByteArray);
     void deviceAboutToBeDestroyd(Device*);
+    void ready(); ///< device is open.
+    void errorOpen();
+
 
 public slots:
     void closeSerialPort();
 
-signals:
-    void ready(); ///< device is open.
-    void errorOpen();
 
 protected:
     bool isValid(const QByteArray &aData);
@@ -49,9 +52,11 @@ protected:
 private slots:
     void readData();
     void handleError(QSerialPort::SerialPortError error);
+    void onConnectionAboutToClose();
 private:
     std::unique_ptr<QSerialPort> mSerialPort;
     bool mOverideDataReadFlag;
+    bool mDataListenFlag;
 
     QString mName;
 

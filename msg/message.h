@@ -1,7 +1,8 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-#include <stdio.h>
+#include <QByteArray>
+
 
 /**
  * @brief The Message class
@@ -17,7 +18,7 @@ class Message
 {
 public:
     Message();
-    Message(unsigned char *aMsg);
+    Message(const QByteArray &aMsg);
 
     /**
      * @brief isValid
@@ -31,22 +32,25 @@ public:
      *
      * @return int an error code
      */
-    int isValid();
+    int isValid() const;
 
-    void add(char* aKey, double aValue);
-    void add(char *aKey, float aValue);
-    void add(char* aKey, int aValue);
+    void add(const QString &aKey, double aValue);
+    void add(const QString &Key, float aValue);
+    void add(const QString &aKey, int aValue);
+    void add(const QString &aKey, bool aValue);
+    void add(const QString &aKey, QString aValue);
 
     void finnish(); ///< prepare meassege to be transmited.
 
-    int getMessage(unsigned char *&rMessage); ///< get the message
+    QByteArray getMessage() const; ///< get the message
+
+    QString getAtmegaDeviceName();
 private:
     void calcCheckcode();
-    int validateMessage(const unsigned char *aMsg);
+    int validateMessage(const QByteArray &aMsg);
 
 private:
-    unsigned char *mMessage;
-    size_t mMessageSize;
+    QByteArray mMessage;
     int mIsValid;
 
 };

@@ -1,23 +1,35 @@
 #include "messagehandler.h"
 
 #include <QStringList>
+#include <QDataStream>
+#include <QDebug>
+#include <QTimer>
 
 #include "device.h"
 #include <msg/message.h>
 #include <tagsystem/taglist.h>
 
+#include "../serialdevices/atmega.h"
 
 MessageHandler::MessageHandler(Device *aDevice) :
-    mDevice(aDevice)
+    mDevice(aDevice),
+    mIsAtmega(false)
 {
     connect(mDevice, &Device::dataRecieved, this, &MessageHandler::onDeviceData);
     mDevice->setOverideDataRead(true);
+    if(dynamic_cast<Atmega*>(aDevice))
+    {
+            mIsAtmega = true;
+            QTimer::singleShot(2000, [=](){
+                dynamic_cast<Atmega*>(aDevice)->requestDeviceName();
+            });
+    }
 }
 
 
 void MessageHandler::onDeviceData(QByteArray aData)
 {
-
+   // qDebug() << __FUNCTION__ <<   aData;
     mDataBuffer.append(aData);
     extractMessage();
 }
@@ -26,68 +38,89 @@ void MessageHandler::onDeviceData(QByteArray aData)
 
 void MessageHandler::parseData(QByteArray aMsg)
 {
-    Message msg((unsigned char*)aMsg.data());
+    qDebug() << "Got message: " << aMsg;
+    Message msg(aMsg);
     if(msg.isValid() != 1)
-        return;
-
-    aMsg.remove(0,8); // remove header.
-    aMsg.remove(aMsg.size()-2, 2); // remove last two bytes, checksum + end
-
-    QString str(aMsg);
-    QStringList tupples = str.split(",");
-    for(int i=0; i<tupples.size(); ++i)
     {
-        QString key = tupples.at(i).split(":").first();
-        QString val = tupples[i].remove(key);
+        qDebug() << "Invalid message(" << msg.isValid() << ")!!!" ;
 
-        QString tagName = QString("%1.%2").arg(mDevice->getDeviceName()).arg(key);
-
-        char type = val.at(1).toLatin1();
-        if(type == 'f') // float
+        if(mIsAtmega && !dynamic_cast<Atmega*>(mDevice)->isDeviceNameSet())
         {
-            if(!mTags.contains(tagName))
-            {
-                Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), key, Tag::eDouble);
-                mTags[tagName] = tag;
-            }
-            val.remove(0,2);
-            if(val.size() != 4)
-                return;
-            float f;
-            f = *reinterpret_cast<const float*>(val.data());
-            mTags[key]->setValue((double)f);
-
+            //dynamic_cast<Atmega*>(mDevice)->setDeviceName(aMsg);
+            dynamic_cast<Atmega*>(mDevice)->requestDeviceName();
         }
-        else if(type == 'i') // int
-        {
-            if(!mTags.contains(key))
-            {
-                Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), key, Tag::eInt);
-                mTags[tagName] = tag;
-            }
-
-            val.remove(0,2);
-            if(val.size() != 4)
-                return;
-            int i;
-            i = *reinterpret_cast<const int*>(val.data());
-            mTags[key]->setValue(i);
-        }
-        else if(type == 'd') // double
-        {
-            if(!mTags.contains(key))
-            {
-                Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), key, Tag::eDouble);
-                mTags[tagName] = tag;
-            }
-            val.remove(0,2);
-            if(val.size() != 4)
-                return;
-            double d;
-            d = *reinterpret_cast<const double*>(val.data());
-            mTags[key]->setValue(d);
-        }
+        return;
     }
+
+
+    if(mIsAtmega)
+        parseAtmegaMessage(msg);
+}
+
+void MessageHandler::parseAtmegaMessage(const Message &aMessage)
+{
+    qDebug() << __FUNCTION__;
+
+    QByteArray ba  = aMessage.getMessage();
+    ba.remove(0,8);
+    // start from first key
+    QString key;
+    bool hasKey = false;
+    QDataStream stream(ba);
+    while(!stream.atEnd())
+    {
+        uint8_t c;
+        stream >> c;
+        if(char(c) != ':' && !hasKey)
+            key.append(c);
+        else if(c == ':')
+        {
+            hasKey = true;
+            // skip, got key
+        }
+        else if(c == 'f')
+        {
+            float f;
+            stream >> f;
+            emit floatValue(key, f);
+            key.clear();
+            hasKey = false;
+        }
+        else if(c == 'i')
+        {
+            int i;
+            stream >> i;
+            emit intValue(key, i);
+            key.clear();
+            hasKey = false;
+        }
+        else if(c == 'b')
+        {
+            qint8 c;
+            stream >> c;
+            bool b = c == '1' ? true : false;
+            emit boolValue(key, b);
+            key.clear();
+            hasKey = false;
+        }
+        else if(c == 'c')
+        {
+            uint8_t len;
+            stream >> len;
+            QString val;
+            for(int i = 0; i<len; ++i)
+            {
+                qint8 c;
+                stream >> c;
+                val.append(c);
+            }
+            emit stringValue(key, val);
+            key.clear();
+            hasKey = false;
+        }
+
+    }
+
 }
 
 void MessageHandler::extractMessage()
@@ -108,5 +141,6 @@ void MessageHandler::extractMessage()
     // buffer contains a message.
     QByteArray message = mDataBuffer.mid(idx, size);
     mDataBuffer.remove(0, idx+size);
+
     parseData(message);
 }
