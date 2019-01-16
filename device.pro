@@ -41,7 +41,7 @@ if(debug){
 LIBS += -L$$LIBPATH -ltagsystemd
 }
 
-INCLUDEPATH += ../../tagsystem
+INCLUDEPATH += ../
 
 
 SOURCES += \
@@ -56,7 +56,8 @@ SOURCES += \
     serialdevices/oscilloscope.cpp \
     msg/messagehandlermanager.cpp \
     msg/messagehandler.cpp \
-    msg/message.cpp
+    msg/message.cpp \
+    serialdevices/atmega.cpp
 
 HEADERS += \
         device.h \
@@ -71,7 +72,8 @@ HEADERS += \
     serialdevices/oscilloscope.h \
     msg/messagehandlermanager.h \
     msg/messagehandler.h \
-    msg/message.h
+    msg/message.h \
+    serialdevices/atmega.h
 
 unix {
     target.path = /usr/lib
