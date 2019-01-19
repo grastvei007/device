@@ -41,7 +41,7 @@ if(debug){
 LIBS += -L$$LIBPATH -ltagsystemd
 }
 
-INCLUDEPATH += ../
+INCLUDEPATH += ..
 
 
 SOURCES += \
@@ -57,7 +57,9 @@ SOURCES += \
     msg/messagehandlermanager.cpp \
     msg/messagehandler.cpp \
     msg/message.cpp \
-    serialdevices/atmega.cpp
+    serialdevices/atmega.cpp \
+    msg/messagereader.cpp \
+    msg/messagepair.cpp
 
 HEADERS += \
         device.h \
@@ -73,7 +75,9 @@ HEADERS += \
     msg/messagehandlermanager.h \
     msg/messagehandler.h \
     msg/message.h \
-    serialdevices/atmega.h
+    serialdevices/atmega.h \
+    msg/messagereader.h \
+    msg/messagepair.h
 
 unix {
     target.path = /usr/lib

@@ -46,8 +46,9 @@ void MessageHandler::parseData(QByteArray aMsg)
 
         if(mIsAtmega && !dynamic_cast<Atmega*>(mDevice)->isDeviceNameSet())
         {
-            //dynamic_cast<Atmega*>(mDevice)->setDeviceName(aMsg);
-            dynamic_cast<Atmega*>(mDevice)->requestDeviceName();
+            QTimer::singleShot(2000, [=](){
+                dynamic_cast<Atmega*>(mDevice)->requestDeviceName();
+            });
         }
         return;
     }
