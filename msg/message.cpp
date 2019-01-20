@@ -106,7 +106,7 @@ void Message::calcCheckcode()
             n += (int)mMessage.at(i);
     }
 
-    mMessage[mMessage.size()-2] = (char)(n % 256);
+    mMessage[mMessage.size()-2] = (char)(n % 255);
 }
 
 

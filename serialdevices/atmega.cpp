@@ -60,3 +60,12 @@ void Atmega::requestDeviceName()
     msg.finnish();
     sendMessage(msg);
 }
+
+
+void Atmega::createTags()
+{
+    Message msg;
+    msg.add(QString("createTags"), QString(""));
+    msg.finnish();
+    sendMessage(msg);
+}

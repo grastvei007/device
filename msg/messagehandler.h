@@ -7,6 +7,7 @@
 #include <QMap>
 
 #include <tagsystem/tag.h>
+#include <tagsystem/tagsocket.h>
 
 class Message;
 class Device;
@@ -49,6 +50,9 @@ private slots:
     void onIntValue(QString aKey, int aValue);
     void onBoolValue(QString aKey, bool aValue);
     void onStringValue(QString aKey, QString aValue);
+
+    //handle changes
+    void onTagSocketValueChanged(TagSocket *aTagSocket);
 private:
     void parseData(QByteArray aMsg);
     void extractMessage();
@@ -60,7 +64,7 @@ private:
 
     QByteArray mDataBuffer;
 
-    QMap<QString, Tag*> mTags;
+    QMap<QString, TagSocket*> mTagSockets;
 };
 
 #endif // MESSAGEHANDLER_H

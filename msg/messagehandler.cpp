@@ -87,8 +87,11 @@ void MessageHandler::parseAtmegaMessage(const Message &aMessage)
         QString key = pair->getKey();
         switch (pair->getType()) {
         case MessagePair::eBool:
-
+        {
+            bool val = pair->getBoolValue();
+            emit boolValue(key, val);
             break;
+        }
         case MessagePair::eFloat:
         {
             double val = pair->getFloatValue();
@@ -145,6 +148,17 @@ void MessageHandler::onDoubleValue(QString aKey, double aValue)
 {
     if(!mDeviceNameIsSet)
         return;
+
+    if(mTagSockets.contains(aKey))
+        mTagSockets[aKey]->writeValue(aValue);
+    else
+    {
+        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, Tag::eDouble);
+        tag->setValue(aValue);
+        TagSocket *socket = new TagSocket(mDevice->getDeviceName(), aKey, TagSocket::eDouble);
+        socket->hookupTag(tag);
+        mTagSockets[aKey] = socket;
+    }
 }
 
 
@@ -152,6 +166,17 @@ void MessageHandler::onIntValue(QString aKey, int aValue)
 {
     if(!mDeviceNameIsSet)
         return;
+
+    if(mTagSockets.contains(aKey))
+        mTagSockets[aKey]->writeValue(aValue);
+    else
+    {
+        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, Tag::eInt);
+        tag->setValue(aValue);
+        TagSocket *socket = new TagSocket(mDevice->getDeviceName(), aKey, TagSocket::eInt);
+        socket->hookupTag(tag);
+        mTagSockets[aKey] = socket;
+    }
 }
 
 
@@ -159,6 +184,21 @@ void MessageHandler::onBoolValue(QString aKey, bool aValue)
 {
     if(!mDeviceNameIsSet)
         return;
+
+    if(mTagSockets.contains(aKey))
+    {
+        mTagSockets[aKey]->writeValue(aValue);
+    }
+    else
+    {
+        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, Tag::eBool);
+        tag->setValue(aValue);
+        TagSocket *socket = new TagSocket(mDevice->getDeviceName(), aKey, TagSocket::eBool);
+        socket->hookupTag(tag);
+
+        mTagSockets[aKey] = socket;
+    }
+
 }
 
 /**
@@ -175,10 +215,91 @@ void MessageHandler::onStringValue(QString aKey, QString aValue)
 
         Tag *tag = TagList::sGetInstance().createTag("device", "name", Tag::eString);
         tag->setValue(aValue);
+        TagSocket *socket = new TagSocket("device", "name", TagSocket::eString);
+        socket->hookupTag(tag);
+        mTagSockets["name"] = socket;
+        if(mIsAtmega)
+            dynamic_cast<Atmega*>(mDevice)->createTags();
+
+        return;
 
     }
     if(!mDeviceNameIsSet)
         return;
 
+    if(mTagSockets.contains(aKey))
+        mTagSockets[aKey]->writeValue(aValue);
+    else
+    {
+        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, Tag::eString);
+        tag->setValue(aValue);
+        TagSocket *socket = new TagSocket(mDevice->getDeviceName(), aKey, TagSocket::eString);
+        socket->hookupTag(tag);
+        mTagSockets[aKey] = socket;
+    }
+}
 
+/**
+ * @brief MessageHandler::onTagSocketValueChanged
+ *
+ * Listen to changes on tagsocket that are created from messages from
+ * the device, and send values back to the device.
+ *
+ * @param aTagSocket
+ */
+void MessageHandler::onTagSocketValueChanged(TagSocket *aTagSocket)
+{
+    QString key = aTagSocket->getName();
+    switch (aTagSocket->getType()) {
+    case TagSocket::eBool:
+    {
+        bool value;
+        if(aTagSocket->readValue(value))
+        {
+            Message msg;
+            msg.add(key, value);
+            msg.finnish();
+            mDevice->write(msg.getMessage());
+        }
+        break;
+    }
+    case TagSocket::eDouble:
+    {
+        double value;
+        if(aTagSocket->readValue(value))
+        {
+            Message msg;
+            msg.add(key, value);
+            msg.finnish();
+            mDevice->write(msg.getMessage());
+        }
+        break;
+    }
+    case TagSocket::eInt:
+    {
+        int value;
+        if(aTagSocket->readValue(value))
+        {
+            Message msg;
+            msg.add(key, value);
+            msg.finnish();
+            mDevice->write(msg.getMessage());
+        }
+        break;
+    }
+    case TagSocket::eString:
+    {
+        QString value;
+        if(aTagSocket->readValue(value))
+        {
+            Message msg;
+            msg.add(key,value);
+            msg.finnish();
+            mDevice->write(msg.getMessage());
+        }
+        break;
+    }
+    default:
+        Q_UNREACHABLE();
+    }
 }

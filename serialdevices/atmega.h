@@ -18,6 +18,7 @@ public:
 
     void setDeviceName(const Message &aMessage); ///< set the device name if the massage contains device name.
     void requestDeviceName();
+    void createTags();
 signals:
 
 public slots:
