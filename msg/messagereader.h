@@ -18,6 +18,7 @@ public:
 
     void parse();
     int getNumberOfPairs() const;
+    int hasKey(QString aKey);
 
     MessagePair* getMessagePairByIndex(int aIdx) const;
 signals:

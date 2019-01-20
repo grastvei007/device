@@ -154,6 +154,20 @@ int MessageReader::getNumberOfPairs() const
 }
 
 
+int MessageReader::hasKey(QString aKey)
+{
+    int r = -1;
+
+    for(int i=0; i<mMessagePairs.size(); ++i)
+    {
+        if(mMessagePairs.at(i)->getKey() == aKey)
+            return i;
+    }
+
+    return r;
+}
+
+
 MessagePair* MessageReader::getMessagePairByIndex(int aIdx) const
 {
     if(aIdx < 0 || aIdx > mMessagePairs.size())

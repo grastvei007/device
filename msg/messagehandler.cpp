@@ -17,7 +17,8 @@
 
 MessageHandler::MessageHandler(Device *aDevice) :
     mDevice(aDevice),
-    mIsAtmega(false)
+    mIsAtmega(false),
+    mDeviceNameIsSet(false)
 {
     connect(mDevice, &Device::dataRecieved, this, &MessageHandler::onDeviceData);
     mDevice->setOverideDataRead(true);
@@ -28,6 +29,11 @@ MessageHandler::MessageHandler(Device *aDevice) :
                 dynamic_cast<Atmega*>(aDevice)->requestDeviceName();
             });
     }
+
+    connect(this, &MessageHandler::boolValue, this, &MessageHandler::onBoolValue);
+    connect(this, &MessageHandler::doubleValue, this, &MessageHandler::onDoubleValue);
+    connect(this, &MessageHandler::intValue, this, &MessageHandler::onIntValue);
+    connect(this, &MessageHandler::stringValue, this, &MessageHandler::onStringValue);
 }
 
 
@@ -74,10 +80,37 @@ void MessageHandler::parseAtmegaMessage(const Message &aMessage)
 
     MessageReader reader(&ba);
     reader.parse();
+
     for(int i=0; i<reader.getNumberOfPairs(); ++i)
     {
         MessagePair *pair = reader.getMessagePairByIndex(i);
-        qDebug() << pair->getKey();
+        QString key = pair->getKey();
+        switch (pair->getType()) {
+        case MessagePair::eBool:
+
+            break;
+        case MessagePair::eFloat:
+        {
+            double val = pair->getFloatValue();
+            emit doubleValue(key, val);
+            break;
+        }
+        case MessagePair::eInt:
+        {
+            int val = pair->getIntValue();
+            emit intValue(key, val);
+            break;
+        }
+        case MessagePair::eString:
+        {
+            QString val = pair->getStringValue();
+            emit stringValue(key, val);
+            break;
+        }
+        default:
+            Q_UNREACHABLE();
+            break;
+        }
     }
 
 }
@@ -105,4 +138,46 @@ void MessageHandler::extractMessage()
     mDataBuffer.remove(0, idx+size);
 
     parseData(message);
+}
+
+
+void MessageHandler::onDoubleValue(QString aKey, double aValue)
+{
+    if(!mDeviceNameIsSet)
+        return;
+}
+
+
+void MessageHandler::onIntValue(QString aKey, int aValue)
+{
+    if(!mDeviceNameIsSet)
+        return;
+}
+
+
+void MessageHandler::onBoolValue(QString aKey, bool aValue)
+{
+    if(!mDeviceNameIsSet)
+        return;
+}
+
+/**
+ * @brief MessageHandler::onStringValue
+ * @param aKey
+ * @param aKey
+ */
+void MessageHandler::onStringValue(QString aKey, QString aValue)
+{
+    if(aKey == "deviceName" && !mDeviceNameIsSet)
+    {
+        mDevice->setDeviceName(aValue);
+        mDeviceNameIsSet = true;
+
+        Tag *tag = TagList::sGetInstance().createTag("device", "name", Tag::eInt);
+
+    }
+    if(!mDeviceNameIsSet)
+        return;
+
+
 }
