@@ -94,7 +94,7 @@ void MessageReader::parse()
                 }u;
                 u.byte[0] = mMessage->at(++i);
                 u.byte[1] = mMessage->at(++i);
-                QByteArray val = mMessage->mid(i, u.s);
+                QByteArray val = mMessage->mid(++i, u.s);
                 i += u.s;
                 MessagePair *pair = new MessagePair;
                 pair->setKey(key);

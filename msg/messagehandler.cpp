@@ -173,7 +173,8 @@ void MessageHandler::onStringValue(QString aKey, QString aValue)
         mDevice->setDeviceName(aValue);
         mDeviceNameIsSet = true;
 
-        Tag *tag = TagList::sGetInstance().createTag("device", "name", Tag::eInt);
+        Tag *tag = TagList::sGetInstance().createTag("device", "name", Tag::eString);
+        tag->setValue(aValue);
 
     }
     if(!mDeviceNameIsSet)
