@@ -9,9 +9,9 @@ Message::Message() :
 }
 
 
-Message::Message(const QByteArray &aMsg)
+Message::Message(const QByteArray &aMsg) : mMessage(aMsg)
 {
-    mIsValid = validateMessage(aMsg);
+   // mIsValid = validateMessage(aMsg);
 }
 
 

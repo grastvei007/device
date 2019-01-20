@@ -1,4 +1,5 @@
 #include "messagereader.h"
+#include <QDebug>
 
 MessageReader::MessageReader(QByteArray *aMessage) :
     mMessage(aMessage)
@@ -43,7 +44,11 @@ bool MessageReader::isValid(QByteArray &aMsg, QString &rError)
     int sum = 0;
     for(int i=0; i<n; ++i)
     {
+        if(i == n-2)
+            continue;
+
         int c = (int)aMsg.at(i);
+        qDebug() << "c(" << c << ") " << (char)c;
         // just make sure it is in range.
         while(c < 0)
             c += 255;
@@ -54,9 +59,9 @@ bool MessageReader::isValid(QByteArray &aMsg, QString &rError)
     }
 
     int r = sum % 255;
-    if(aMsg.at(n-1) != r)
+    if(aMsg.at(n-2) != r)
     {
-        rError.append("Message checksum is wrong");
+        rError.append(QString("Message checksum is wrong sum, %1, r=%2").arg(sum).arg(r));
         return false;
     }
 
@@ -100,15 +105,43 @@ void MessageReader::parse()
             }
             else if(mMessage->at(i) == 'f')
             {
+                char bytes[4];
+                bytes[0] = mMessage->at(++i);
+                bytes[1] = mMessage->at(++i);
+                bytes[2] = mMessage->at(++i);
+                bytes[3] = mMessage->at(++i);
+                MessagePair *pair = new MessagePair;
+                pair->setKey(key);
+                pair->setFloatFromBytes(bytes);
+                mMessagePairs.push_back(pair);
 
+                hasKey = false;
+                key.clear();
             }
             else if(mMessage->at(i) == 'i')
             {
+                char bytes[4];
+                bytes[0] = mMessage->at(++i);
+                bytes[1] = mMessage->at(++i);
+                bytes[2] = mMessage->at(++i);
+                bytes[3] = mMessage->at(++i);
+                MessagePair *pair = new MessagePair;
+                pair->setKey(key);
+                pair->setIntFromBytes(bytes);
+                mMessagePairs.push_back(pair);
 
+                hasKey = false;
+                key.clear();
             }
             else if(mMessage->at(i) == 'b')
             {
+                MessagePair *pair = new MessagePair;
+                pair->setKey(key);
+                pair->setBoolFromByte(mMessage->at(++i));
+                mMessagePairs.push_back(pair);
 
+                hasKey = false;
+                key.clear();
             }
         }
     }
@@ -117,11 +150,13 @@ void MessageReader::parse()
 
 int MessageReader::getNumberOfPairs() const
 {
-
+    return mMessagePairs.size();
 }
 
 
 MessagePair* MessageReader::getMessagePairByIndex(int aIdx) const
 {
-
+    if(aIdx < 0 || aIdx > mMessagePairs.size())
+        return nullptr;
+    return mMessagePairs.at(aIdx);
 }

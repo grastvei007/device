@@ -94,7 +94,8 @@ void Device::openDevice(SerialPortSettings *aSerialPortSettings)
         qDebug() << "Baud: " << mSerialPort->baudRate();
         emit ready();
     } else {
-        QMessageBox::information(nullptr, tr("Error"), mSerialPort->errorString());
+        qDebug() << "Error " << mSerialPort->errorString();
+        //QMessageBox::information(nullptr, tr("Error"), mSerialPort->errorString());
         emit errorOpen();
     }
 }
