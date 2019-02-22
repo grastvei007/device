@@ -8,7 +8,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT += serialport gui
 
 TEMPLATE = lib
-
+CONFIG += c++14
 DEFINES += DEVICE_LIBRARY
 
 release: TARGET = device
@@ -39,6 +39,9 @@ LIBPATH = $$(DEV_LIBS)
 
 if(debug){
 LIBS += -L$$LIBPATH -ltagsystemd
+}
+else{
+    LIBS += -L$$LIBPATH -ltagsystem
 }
 
 INCLUDEPATH += ..

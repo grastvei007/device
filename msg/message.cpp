@@ -2,6 +2,9 @@
 
 #include <QDebug>
 
+#include <tagsystem/tagsocket.h>
+
+
 Message::Message() :
     mIsValid(true)
 {
@@ -12,6 +15,47 @@ Message::Message() :
 Message::Message(const QByteArray &aMsg) : mMessage(aMsg)
 {
    // mIsValid = validateMessage(aMsg);
+}
+
+
+Message::Message(const TagSocket &aTagSocket)
+{
+    mMessage = "<msg0000";
+    QString key = aTagSocket.getName();
+   /* switch (aTagSocket.getType()) {
+    case TagSocket::eDouble:
+    {
+        double val;
+        aTagSocket.readValue(val);
+        add(key, val);
+        break;
+    }
+    case TagSocket::eInt:
+    {
+        int val;
+        aTagSocket.readValue(val);
+        add(key, val);
+        break;
+    }
+    case TagSocket::eBool:
+    {
+        bool val;
+        aTagSocket.readValue(val);
+        add(key, val);
+        break;
+    }
+    case TagSocket::eString:
+    {
+        QString val;
+        aTagSocket.readValue(val);
+        add(key, val);
+        break;
+    }
+    default:
+        Q_UNREACHABLE();
+        break;
+    }
+    finnish();*/
 }
 
 

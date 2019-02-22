@@ -3,6 +3,7 @@
 
 #include <QByteArray>
 
+class TagSocket;
 
 /**
  * @brief The Message class
@@ -19,6 +20,7 @@ class Message
 public:
     Message();
     Message(const QByteArray &aMsg);
+    Message(const TagSocket &aTagSocket); ///< construct a message from tagsocket name/value.
 
     /**
      * @brief isValid

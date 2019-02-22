@@ -15,7 +15,7 @@ Oscilloscope::Oscilloscope() : Device()
 
     mUpdateHz->setValue(10);
 
-    mUpdateHzTagSocket = new TagSocket("oscilloscope", "hz", TagSocket::eInt);
+    mUpdateHzTagSocket = TagSocket::createTagSocket("oscilloscope", "hz", TagSocket::eInt);
     mUpdateHzTagSocket->hookupTag(mUpdateHz);
     connect(mUpdateHzTagSocket, static_cast<void(TagSocket::*)(int)>(&TagSocket::valueChanged), this, &Oscilloscope::onUpdateHzTagSocketValueChanged);
 
