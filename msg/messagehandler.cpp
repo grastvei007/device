@@ -26,7 +26,7 @@ MessageHandler::MessageHandler(Device *aDevice) :
     {
             mIsAtmega = true;
             QTimer::singleShot(2000, [=](){
-                dynamic_cast<Atmega*>(aDevice)->requestDeviceName();
+                pollAtmegaDeviceName();
             });
     }
 
@@ -39,11 +39,24 @@ MessageHandler::MessageHandler(Device *aDevice) :
 
 void MessageHandler::onDeviceData(QByteArray aData)
 {
-   // qDebug() << __FUNCTION__ <<   aData;
+    qDebug() << __FUNCTION__ <<   aData;
     mDataBuffer.append(aData);
     extractMessage();
 }
 
+
+void MessageHandler::pollAtmegaDeviceName()
+{
+     if(mDeviceNameIsSet)
+     {
+
+         return;
+     }
+     dynamic_cast<Atmega*>(mDevice)->requestDeviceName();
+     QTimer::singleShot(4000, [=](){
+        pollAtmegaDeviceName();
+        });
+}
 
 
 void MessageHandler::parseData(QByteArray aMsg)
@@ -55,12 +68,12 @@ void MessageHandler::parseData(QByteArray aMsg)
     {
         qDebug() << "Invalid message(" << error << ")!!!" ;
 
-        if(mIsAtmega && !dynamic_cast<Atmega*>(mDevice)->isDeviceNameSet())
+       /* if(mIsAtmega && !dynamic_cast<Atmega*>(mDevice)->isDeviceNameSet())
         {
             QTimer::singleShot(4000, [=](){
                 dynamic_cast<Atmega*>(mDevice)->requestDeviceName();
             });
-        }
+        }*/
         return;
     }
 
@@ -157,6 +170,7 @@ void MessageHandler::onDoubleValue(QString aKey, double aValue)
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket(mDevice->getDeviceName(), aKey, TagSocket::eDouble);
         socket->hookupTag(tag);
+        connect(socket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &MessageHandler::onTagSocketValueChanged);
         mTagSockets[aKey] = socket;
     }
 }
@@ -175,6 +189,7 @@ void MessageHandler::onIntValue(QString aKey, int aValue)
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket(mDevice->getDeviceName(), aKey, TagSocket::eInt);
         socket->hookupTag(tag);
+        connect(socket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &MessageHandler::onTagSocketValueChanged);
         mTagSockets[aKey] = socket;
     }
 }
@@ -195,7 +210,7 @@ void MessageHandler::onBoolValue(QString aKey, bool aValue)
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket(mDevice->getDeviceName(), aKey, TagSocket::eBool);
         socket->hookupTag(tag);
-
+        connect(socket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &MessageHandler::onTagSocketValueChanged);
         mTagSockets[aKey] = socket;
     }
 
@@ -217,6 +232,7 @@ void MessageHandler::onStringValue(QString aKey, QString aValue)
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket("device", "name", TagSocket::eString);
         socket->hookupTag(tag);
+        //connect(socket, qOverload<TagSocket*(&TagSocket::valueChanged), this, &MessageHandler::onTagSocketValueChanged);
         mTagSockets["name"] = socket;
         if(mIsAtmega)
             dynamic_cast<Atmega*>(mDevice)->createTags();

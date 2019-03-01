@@ -74,11 +74,17 @@ void Message::add(const QString &aKey, float aValue)
 {
     QString pair(aKey);
     pair.append(":f");
-    unsigned char bytes[4];
-    memcpy(bytes, (unsigned char*) &aValue, 4);
-
-    pair.append((const char*)bytes);
+    union U
+    {
+        float f;
+        char bytes[4];
+    }u;
+    u.f = aValue;
     mMessage.append(pair);
+    mMessage.append(u.bytes[0]);
+    mMessage.append(u.bytes[1]);
+    mMessage.append(u.bytes[2]);
+    mMessage.append(u.bytes[3]);
 }
 
 
@@ -86,10 +92,18 @@ void Message::add(const QString &aKey, int aValue)
 {
     QString pair(aKey);
     pair.append(":i");
-    unsigned char buffer[4];
-    memcpy(buffer, (unsigned char*)&aValue, 4);
-    pair.append((const char*)buffer);
+
+    union U
+    {
+        int i;
+        char bytes[4];
+    }u;
+    u.i = aValue;
     mMessage.append(pair);
+    mMessage.append(u.bytes[0]);
+    mMessage.append(u.bytes[1]);
+    mMessage.append(u.bytes[2]);
+    mMessage.append(u.bytes[3]);
 }
 
 void Message::add(const QString &aKey, bool aValue)

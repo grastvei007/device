@@ -55,7 +55,6 @@ void Atmega::setDeviceName(const Message &aMessage)
 void Atmega::requestDeviceName()
 {
     Message msg;
-    bool b = true;
     msg.add(QString("deviceName"), QString(""));
     msg.finnish();
     sendMessage(msg);

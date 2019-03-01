@@ -45,6 +45,7 @@ signals:
 
 private slots:
     void onDeviceData(QByteArray aData);
+    void pollAtmegaDeviceName();
 
     void onDoubleValue(QString aKey, double aValue);
     void onIntValue(QString aKey, int aValue);

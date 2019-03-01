@@ -51,17 +51,20 @@ bool MessageReader::isValid(QByteArray &aMsg, QString &rError)
         qDebug() << "c(" << c << ") " << (char)c;
         // just make sure it is in range.
         while(c < 0)
-            c += 255;
-        while(c > 255)
-            c -= 255;
+            c += 256;
+        while(c > 256)
+            c -= 256;
 
         sum += c;
     }
 
-    int r = sum % 255;
-    if(aMsg.at(n-2) != r)
+    int r = sum % 256;
+    int t = (int)aMsg.at(n-2);
+    while(t < 0)
+        t += 256;
+    if(t != r)
     {
-        rError.append(QString("Message checksum is wrong sum, %1, r=%2").arg(sum).arg(r));
+        rError.append(QString("Message checksum is wrong sum, %1, r=%2, cs=%3").arg(sum).arg(r).arg(t));
         return false;
     }
 
