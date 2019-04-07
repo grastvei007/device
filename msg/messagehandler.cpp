@@ -266,6 +266,8 @@ void MessageHandler::onStringValue(QString aKey, QString aValue)
 void MessageHandler::onTagSocketValueChanged(TagSocket *aTagSocket)
 {
     QString key = aTagSocket->getName();
+    if(key.contains("adc", Qt::CaseInsensitive))
+        return;
     switch (aTagSocket->getType()) {
     case TagSocket::eBool:
     {
