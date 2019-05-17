@@ -49,11 +49,11 @@ INCLUDEPATH += ..
 
 SOURCES += \
         device.cpp \
+    serialdevices/victronenergy.cpp \
     serialportsettings.cpp \
     settingsdialog.cpp \
     inputdevicefactory.cpp \
     inputdevicemanager.cpp \
-    pidextractdevice.cpp \
     baseinputdevicefactory.cpp \
     serialdevices/bmw712smart.cpp \
     serialdevices/oscilloscope.cpp \
@@ -66,12 +66,15 @@ SOURCES += \
 
 HEADERS += \
         device.h \
-        device_global.h \ 
+        device_global.h \  \
+        serialdevices/atmega.h \
+        serialdevices/bmw712smart.h \
+        serialdevices/oscilloscope.h \
+        serialdevices/victronenergy.h \
     serialportsettings.h \
     settingsdialog.h \
     inputdevicefactory.h \
     inputdevicemanager.h \
-    pidextractdevice.h \
     baseinputdevicefactory.h \
     serialdevices/bmw712smart.h \
     serialdevices/oscilloscope.h \

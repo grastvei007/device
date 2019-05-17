@@ -8,7 +8,8 @@
 
 Device::Device() :
     mOverideDataReadFlag(false),
-    mDataListenFlag(false)
+    mDataListenFlag(false),
+    mName()
 {
 
     mSerialPort.reset(new QSerialPort);

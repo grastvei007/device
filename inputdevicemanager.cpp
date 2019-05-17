@@ -1,12 +1,11 @@
 #include "inputdevicemanager.h"
 
 #include <QSerialPortInfo>
+#include <QSerialPort>
 #include <QDebug>
 
 #include "serialportsettings.h"
-#include "pidextractdevice.h"
-#include "serialdevices/bmw712smart.h"
-#include "serialdevices/oscilloscope.h"
+#include "serialdevices/victronenergy.h"
 #include "serialdevices/atmega.h"
 
 
@@ -130,27 +129,31 @@ void InputDeviceManager::connectInputDevice(QString aDeviceName)
     SerialPortSettings *settings = new SerialPortSettings(mDefaultSerialPortSettings);
     settings->setName(aDeviceName);
 
-    // try to open an atmega
-    Atmega *atmega = new Atmega();
-    atmega->openDevice(settings);
-    mConnectedInputDevices[aDeviceName] = atmega;
-    emit inputDeviceConnected(aDeviceName);
+    QSerialPort serialport;
+    serialport.setPortName(aDeviceName);
+    QSerialPortInfo spi(serialport);
+    QString manufacturer;
+    int id = spi.vendorIdentifier();
+    if(id > 0)
+        manufacturer = spi.manufacturer();
+    if(manufacturer.contains("VictronEnergy"))
+    {
+        settings->setBaudRate(19200);
+        VictronEnergy *ve = new VictronEnergy();
+        ve->openDevice(settings);
+        mConnectedInputDevices[aDeviceName] = ve;
+        emit inputDeviceConnected(aDeviceName);
+    }
+    else
+    {
+        // try to open an atmega
+        Atmega *atmega = new Atmega();
+        atmega->openDevice(settings);
+        mConnectedInputDevices[aDeviceName] = atmega;
+        emit inputDeviceConnected(aDeviceName);
+    }
 
-
-  /*  mPidExtractDevice= new PidExtractDevice();
-    connect(mPidExtractDevice, &PidExtractDevice::pidReady, this, &InputDeviceManager::onPidReady);
-    connect(mPidExtractDevice, &PidExtractDevice::errorFindingPid, this, &InputDeviceManager::onErrorFindingPid);
-
-    if(!mPidErrorTimer)
-        mPidErrorTimer = new QTimer;
-
-   mPidErrorTimer->singleShot(5000, this, &InputDeviceManager::onErrorFindingPid);
-
-    mPidExtractDevice->openDevice(settings);
-*/
     delete settings;
-
-
 }
 
 
@@ -189,51 +192,3 @@ void InputDeviceManager::ignoreSerialPort(QString aDeviceName)
     mAvailableSerialPorts.push_back(aDeviceName);
 }
 
-
-void InputDeviceManager::onErrorFindingPid()
-{
-
-    mPidExtractDevice->deleteLater();
-    mPidExtractDevice = nullptr;
-}
-
-
-void InputDeviceManager::onPidReady()
-{
-    mPidErrorTimer->deleteLater();
-    mPidErrorTimer = nullptr;
-
-    int pid = mPidExtractDevice->getPid();
-    QString portName = mPidExtractDevice->getPortName();
-    mPidExtractDevice->pidOk();
-    mPidExtractDevice->closeSerialPort();
-    mPidExtractDevice->deleteLater();
-    mPidExtractDevice = nullptr;
-
-    if(!mUseDefaultSerialPortSettingFlag)
-        return; //FIXME
-
-    if(pid == 825766721)
-    {
-        SerialPortSettings setting(mDefaultSerialPortSettings);
-
-        Bmw712Smart *bmv = new Bmw712Smart();
-        bmv->openDevice(&setting);
-        mConnectedInputDevices[portName] = bmv;
-        emit inputDeviceConnected(portName);
-    }
-    else if(pid == 624832759)
-    {
-        SerialPortSettings settings(mDefaultSerialPortSettings);
-        settings.setName(portName);
-        Device *oscilloscope = new Oscilloscope();
-        oscilloscope->openDevice(&settings);
-
-    }
-    else
-    {
-
-    }
-
-    emit inputDeviceConnected(portName);
-}
