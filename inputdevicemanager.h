@@ -59,8 +59,6 @@ private:
 
 private slots:
     void detectInputDevices(); ///< polling
-    void onErrorFindingPid();
-    void onPidReady();
     //void onErrorOpenDevice();
 
 private:
