@@ -2,7 +2,7 @@
 
 #include <QDebug>
 #include <QMessageBox>
-#include <QSerialPort>
+#include <QSerialPortInfo>
 
 #include "serialportsettings.h"
 
@@ -93,6 +93,7 @@ void Device::openDevice(SerialPortSettings *aSerialPortSettings)
     if (mSerialPort->open(QIODevice::ReadWrite)) {
         qDebug() << __FUNCTION__;
         qDebug() << "Baud: " << mSerialPort->baudRate();
+        mSerialPortInfo.reset(new QSerialPortInfo(*mSerialPort.get()));
         emit ready();
     } else {
         qDebug() << "Error " << mSerialPort->errorString();
@@ -153,6 +154,16 @@ QString Device::getDeviceName() const
         return getPortName();
 
     return mName;
+}
+
+
+QString Device::getManufacturer() const
+{
+    if(mSerialPortInfo.get())
+    {
+        return mSerialPortInfo->manufacturer();
+    }
+    return QString();
 }
 
 

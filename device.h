@@ -2,12 +2,11 @@
 #define DEVICE_H
 
 #include "device_global.h"
-
 #include <QSerialPort>
 
 #include <memory>
 
-class QSerialPort;
+class QSerialPortInfo;
 class SerialPortSettings;
 
 /**
@@ -34,6 +33,7 @@ public:
     void setDeviceName(QString aName);
 
     QString getDeviceName() const;
+    QString getManufacturer() const;
 
 signals:
     void dataRecieved(QByteArray);
@@ -55,6 +55,7 @@ private slots:
     void onConnectionAboutToClose();
 private:
     std::unique_ptr<QSerialPort> mSerialPort;
+    std::unique_ptr<QSerialPortInfo> mSerialPortInfo;
     bool mOverideDataReadFlag;
     bool mDataListenFlag;
 
