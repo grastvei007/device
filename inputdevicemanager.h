@@ -49,6 +49,7 @@ public:
     void disconnectInputDevice(QString aDeviceName); ///< Disconnect an input device, and set it available.
 
     Device* getInputDevice(QString aDeviceName);
+    QString getDeviceManufacturer(QString aDeviceName);
 signals:
     void inputDeviceConnected(QString aDeviceName); ///< The name of the input port.
     void inputDeviceDisconnected(QString aDeviceName);

@@ -187,6 +187,13 @@ Device* InputDeviceManager::getInputDevice(QString aDeviceName)
 }
 
 
+QString InputDeviceManager::getDeviceManufacturer(QString aDeviceName)
+{
+    QSerialPortInfo info(aDeviceName);
+    return info.manufacturer();
+}
+
+
 void InputDeviceManager::ignoreSerialPort(QString aDeviceName)
 {
     mAvailableSerialPorts.push_back(aDeviceName);

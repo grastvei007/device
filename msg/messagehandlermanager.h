@@ -31,6 +31,7 @@ public:
     static MessageHandlerManager& sGetInstance();
 
     void createMessageHandlerForDevice(Device *aDevice);
+    MessageHandler* getMessageHandlerForDevice(Device *aDevice) const;
 
 private slots:
     void onDeviceDestroyed(Device *aDevice);

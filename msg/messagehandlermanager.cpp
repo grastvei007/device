@@ -19,6 +19,12 @@ void MessageHandlerManager::createMessageHandlerForDevice(Device *aDevice)
 }
 
 
+MessageHandler* MessageHandlerManager::getMessageHandlerForDevice(Device *aDevice) const
+{
+    return mMessageHandlers[aDevice];
+}
+
+
 void MessageHandlerManager::onDeviceDestroyed(Device *aDevice)
 {
     if(!mMessageHandlers.contains(aDevice))
