@@ -60,6 +60,7 @@ private:
     bool mDataListenFlag;
 
     QString mName;
+    bool mWriteErrorMsg;
 
 };
 

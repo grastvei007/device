@@ -3,13 +3,15 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QSerialPortInfo>
+#include <QTimer>
 
 #include "serialportsettings.h"
 
 Device::Device() :
     mOverideDataReadFlag(false),
     mDataListenFlag(false),
-    mName()
+    mName(),
+    mWriteErrorMsg(true)
 {
 
     mSerialPort.reset(new QSerialPort);
@@ -71,8 +73,13 @@ void Device::setDataListenFlag(bool aListen)
 void Device::handleError(QSerialPort::SerialPortError error)
 {
     if (error == QSerialPort::ResourceError) {
-        QMessageBox::critical(nullptr, tr("Critical Error"), mSerialPort->errorString());
-        closeSerialPort();
+        if(mWriteErrorMsg)
+        {
+            mWriteErrorMsg = false;
+            QMessageBox::critical(nullptr, tr("Critical Error"), mSerialPort->errorString());
+            closeSerialPort();
+            QTimer::singleShot(5000, [=](){mWriteErrorMsg = true;});
+        }
     }
 }
 
