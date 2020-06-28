@@ -11,6 +11,7 @@
 
 class VictronEnergy : public Device
 {
+    Q_OBJECT
 public:
     enum State
     {
