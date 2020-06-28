@@ -42,6 +42,11 @@ public:
     int getPid() const override;
     void dataRead(QByteArray aData) override;
     Value stringToValue(const QString &aString) const;
+
+signals:
+    void intValueReady(QString, int);
+    void doubleValueReady(QString, double);
+
 private:
     void recordFrame(char c);
     void putValuesOnTags();

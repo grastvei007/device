@@ -135,12 +135,14 @@ void VictronEnergy::putValuesOnTags()
                 {
                     int value = iter.value().toInt();
                     tagsocket->writeValue(value);
+                    emit intValueReady(iter.key(), value);
                     break;
                 }
             case TagSocket::eDouble:
             {
                 double value = iter.value().toDouble() / 1000.0;
                 tagsocket->writeValue(value);
+                emit doubleValueReady(iter.key(), value);
                 break;
             }
             case TagSocket::eBool:

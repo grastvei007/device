@@ -55,7 +55,6 @@ SOURCES += \
     inputdevicefactory.cpp \
     inputdevicemanager.cpp \
     baseinputdevicefactory.cpp \
-    serialdevices/bmw712smart.cpp \
     serialdevices/oscilloscope.cpp \
     msg/messagehandlermanager.cpp \
     msg/messagehandler.cpp \
@@ -68,7 +67,6 @@ HEADERS += \
         device.h \
         device_global.h \  \
         serialdevices/atmega.h \
-        serialdevices/bmw712smart.h \
         serialdevices/oscilloscope.h \
         serialdevices/victronenergy.h \
     serialportsettings.h \
@@ -76,7 +74,6 @@ HEADERS += \
     inputdevicefactory.h \
     inputdevicemanager.h \
     baseinputdevicefactory.h \
-    serialdevices/bmw712smart.h \
     serialdevices/oscilloscope.h \
     msg/messagehandlermanager.h \
     msg/messagehandler.h \
