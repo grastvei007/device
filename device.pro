@@ -55,7 +55,6 @@ SOURCES += \
     inputdevicefactory.cpp \
     inputdevicemanager.cpp \
     baseinputdevicefactory.cpp \
-    serialdevices/oscilloscope.cpp \
     msg/messagehandlermanager.cpp \
     msg/messagehandler.cpp \
     msg/message.cpp \
@@ -67,14 +66,12 @@ HEADERS += \
         device.h \
         device_global.h \  \
         serialdevices/atmega.h \
-        serialdevices/oscilloscope.h \
         serialdevices/victronenergy.h \
     serialportsettings.h \
     settingsdialog.h \
     inputdevicefactory.h \
     inputdevicemanager.h \
     baseinputdevicefactory.h \
-    serialdevices/oscilloscope.h \
     msg/messagehandlermanager.h \
     msg/messagehandler.h \
     msg/message.h \
