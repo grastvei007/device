@@ -103,7 +103,7 @@ void VictronEnergy::recordFrame(char c)
         else
         {
             qDebug() << "Device name: " << mProductName;
-            if(mReadFrame.contains("PID") && mProductName.isEmpty())
+            if(mReadFrame.contains("PID") && (mProductName.size() < 2))
             {
                 QString pid = mReadFrame["PID"];
                 mProductName = pidToDeviceName(pid);
@@ -159,6 +159,7 @@ void VictronEnergy::putValuesOnTags()
 
 QString VictronEnergy::pidToDeviceName(const QString &aPid)
 {
+    qDebug() << "Pid: " << aPid;
     if(aPid.contains("0XA381"))
         qDebug() << "BMV712_Smart";
     return QString("BMV712_Smart");
@@ -166,6 +167,8 @@ QString VictronEnergy::pidToDeviceName(const QString &aPid)
 
 void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
 {
+    if(mProductName.size() < 2)
+        return;
   switch (stringToValue(aName))
     {
         case eVoltage:
@@ -289,7 +292,14 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
             break;
         }
         case eNone:
+        {
+            Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eString);
+            tag->setValue(aValue);
+            TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eString);
+            socket->hookupTag(tag);
+            mTagsockets[aName] = socket;
             break;
+        }
     }
 }
 
