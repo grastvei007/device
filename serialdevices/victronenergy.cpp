@@ -157,12 +157,58 @@ void VictronEnergy::putValuesOnTags()
     }
 }
 
+
+/**
+ * @brief VictronEnergy::pidToDeviceName
+ *
+ * Translate the device pid to a human readable name. If no name exist the pid is directly returned
+ *          as a hint to the user to add it later. At least all the values recieved from the device is
+ *          grouped under the same subsystem.
+ *
+ * @param aPid
+ * @return The product name for the victron device.
+ */
 QString VictronEnergy::pidToDeviceName(const QString &aPid)
 {
     qDebug() << "Pid: " << aPid;
     if(aPid.contains("0XA381"))
-        qDebug() << "BMV712_Smart";
-    return QString("BMV712_Smart");
+        return QString("BMV712_Smart");
+    else if(aPid.contains("0XA053"))
+        return QString("MPPT75|15");
+    else if(aPid.contains("0XA054"))
+        return QString("MPPT75|10");
+    else if(aPid.contains("0XA055"))
+        return QString("MPPT100|15");
+    else if(aPid.contains("0XA056"))
+        return QString("MPPT100|30");
+    else if(aPid.contains("0XA057"))
+        return QString("MPPT100|50");
+    else if(aPid.contains("0XA058"))
+        return QString("MPPT150|35");
+    else if(aPid.contains("0XA059"))
+        return QString("MPPT150|100rev2");
+    else if(aPid.contains("0XA05A"))
+        return QString("MPPT150|85rev2");
+    else if(aPid.contains("0XA05B"))
+        return QString("MPPT250|70");
+    else if(aPid.contains("0XA05C"))
+        return QString("MPPT250|85");
+    else if(aPid.contains("0XA05D"))
+        return QString("MPPT250|60");
+    else if(aPid.contains("0XA05E"))
+        return QString("MPPT250|45");
+    else if(aPid.contains("0XA05F"))
+        return QString("MPPT100|20");
+    else if(aPid.contains("0XA060"))
+        return QString("MPPT100|20_48V");
+    else if(aPid.contains("0XA061"))
+        return QString("MPPT150|45");
+    else if(aPid.contains("0XA062"))
+        return QString("MPPT150|60");
+    else if(aPid.contains("0XA063"))
+        return QString("MPPT150|70");
+
+    return aPid;
 }
 
 void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
