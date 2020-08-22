@@ -35,7 +35,8 @@ public:
         eCumulativeAmpHoursDrawn, // H6 mAh
         eTimeSinceFullCharge, // H9 sec
         eAmoutDischargedEnergy, // H17 0.01Kwh
-        eAmountChargedEnergy // H18 0.01Kwh
+        eAmountChargedEnergy, // H18 0.01Kwh
+        ePanelPower // PPV
     };
 
     VictronEnergy();

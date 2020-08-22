@@ -337,6 +337,15 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
             mTagsockets[aName] = socket;
             break;
         }
+        case ePanelPower: //PPV
+        {
+            Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eInt);
+            int val = aValue.toInt();
+            tag->setValue(val);
+            TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eInt);
+            socket->hookupTag(tag);
+            mTagsockets[aName] = socket;
+        }
         case eNone:
         {
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eString);
@@ -376,6 +385,8 @@ VictronEnergy::Value VictronEnergy::stringToValue(const QString &aString) const
         return eAmoutDischargedEnergy;
     else if(aString == "H18")
         return eAmountChargedEnergy;
+    else if(aString == "PPV")
+        return ePanelPower;
 
     return eNone;
 }
