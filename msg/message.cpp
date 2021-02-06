@@ -110,7 +110,10 @@ void Message::add(const QString &aKey, bool aValue)
 {
     QString pair(aKey);
     pair.append(":b");
-    pair.append(aValue ? "1" : "0");
+    if(aValue)
+        pair += char(1);
+    else
+        pair += char(0);
     mMessage.append(pair);
 }
 

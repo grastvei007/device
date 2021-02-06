@@ -13,6 +13,8 @@
 #include "messagereader.h"
 #include "messagepair.h"
 
+#include <iostream>
+
 
 
 MessageHandler::MessageHandler(Device *aDevice) :
@@ -39,7 +41,7 @@ MessageHandler::MessageHandler(Device *aDevice) :
 
 void MessageHandler::onDeviceData(QByteArray aData)
 {
-    qDebug() << __FUNCTION__ <<   aData;
+    //qDebug() << __FUNCTION__ <<   aData;
     mDataBuffer.append(aData);
     extractMessage();
 }
@@ -84,12 +86,16 @@ void MessageHandler::parseData(QByteArray aMsg)
 
 void MessageHandler::parseAtmegaMessage(const Message &aMessage)
 {
-    qDebug() << __FUNCTION__;
+    std::cerr << __FUNCTION__ << " ";
 
     QByteArray ba  = aMessage.getMessage();
     QString error;
     if(!MessageReader::isValid(ba, error))
-        qDebug() << error;
+    {
+        std::cerr << "message invalid: " << error.toStdString() << std::endl;
+        return;
+    }
+
 
     MessageReader reader(&ba);
     reader.parse();
@@ -102,24 +108,28 @@ void MessageHandler::parseAtmegaMessage(const Message &aMessage)
         case MessagePair::eBool:
         {
             bool val = pair->getBoolValue();
+            std::cerr << "bool[" << key.toStdString() << ", " << val << "] ";
             emit boolValue(key, val);
             break;
         }
         case MessagePair::eFloat:
         {
             double val = pair->getFloatValue();
+            std::cerr << "double[" << key.toStdString() << ", " << val << "] ";
             emit doubleValue(key, val);
             break;
         }
         case MessagePair::eInt:
         {
             int val = pair->getIntValue();
+            std::cerr << "int[" << key.toStdString() << ", " << val << "] ";
             emit intValue(key, val);
             break;
         }
         case MessagePair::eString:
         {
             QString val = pair->getStringValue();
+            std::cerr << "string[" << key.toStdString() << ", " << val.toStdString() << "] ";
             emit stringValue(key, val);
             break;
         }
@@ -128,7 +138,7 @@ void MessageHandler::parseAtmegaMessage(const Message &aMessage)
             break;
         }
     }
-
+    std::cerr << std::endl;
 }
 
 void MessageHandler::extractMessage()
