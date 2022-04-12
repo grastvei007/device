@@ -64,7 +64,7 @@ int Message::isValid() const
     return mIsValid;
 }
 
-void Message::add(const QString &aKey, double aValue)
+void Message::add(const QString &/*aKey*/, double /*aValue*/)
 {
 
 }
@@ -80,7 +80,7 @@ void Message::add(const QString &aKey, float aValue)
         char bytes[4];
     }u;
     u.f = aValue;
-    mMessage.append(pair);
+    mMessage.append(pair.toLatin1());
     mMessage.append(u.bytes[0]);
     mMessage.append(u.bytes[1]);
     mMessage.append(u.bytes[2]);
@@ -99,7 +99,7 @@ void Message::add(const QString &aKey, int aValue)
         char bytes[4];
     }u;
     u.i = aValue;
-    mMessage.append(pair);
+    mMessage.append(pair.toLatin1());
     mMessage.append(u.bytes[0]);
     mMessage.append(u.bytes[1]);
     mMessage.append(u.bytes[2]);
@@ -114,7 +114,7 @@ void Message::add(const QString &aKey, bool aValue)
         pair += char(1);
     else
         pair += char(0);
-    mMessage.append(pair);
+    mMessage.append(pair.toLatin1());
 }
 
 
@@ -126,7 +126,7 @@ void Message::add(const QString &aKey, QString aValue)
     memcpy(buffer, (unsigned char*)&s, 2);
     pair.append(QString(":c%1%2").arg(buffer[0]).arg(buffer[1]));
     pair.append(aValue);
-    mMessage.append(pair);
+    mMessage.append(pair.toLatin1());
 }
 
 
@@ -155,7 +155,7 @@ QByteArray Message::getMessage() const
 
 QString Message::getAtmegaDeviceName()
 {
-
+    return QString();
 }
 
 void Message::calcCheckcode()

@@ -147,6 +147,7 @@ void VictronEnergy::putValuesOnTags()
             }
             case TagSocket::eBool:
             case TagSocket::eString:
+            case TagSocket::eTime:
                 break;
             }
         }
@@ -345,6 +346,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
             TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eInt);
             socket->hookupTag(tag);
             mTagsockets[aName] = socket;
+            break;
         }
         case eNone:
         {

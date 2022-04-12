@@ -12,8 +12,8 @@ InputDeviceFactory::InputDeviceFactory()
 }
 
 
-Device* InputDeviceFactory::create(int aPid)
+Device* InputDeviceFactory::create(int /*aPid*/)
 {
-
+    return nullptr;
 }
 

@@ -15,7 +15,6 @@ Device::Device() :
 {
 
     mSerialPort.reset(new QSerialPort);
-    connect(mSerialPort.get(), static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error), this, &Device::handleError);
     connect(mSerialPort.get(), static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::errorOccurred), this, &Device::handleError);
 
     connect(mSerialPort.get(), &QSerialPort::aboutToClose, this, &Device::onConnectionAboutToClose);
@@ -31,7 +30,7 @@ Device::~Device()
         closeSerialPort();
 }
 
-void Device::dataRead(QByteArray aData)
+void Device::dataRead(QByteArray /*aData*/)
 {
     qDebug() << __FUNCTION__ << "Override function to hande data read from device";
 

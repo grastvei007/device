@@ -157,7 +157,7 @@ void InputDeviceManager::connectInputDevice(QString aDeviceName)
 }
 
 
-void InputDeviceManager::connectInputDevice(QString aDeviceName, SerialPortSettings aSerialportSetting)
+void InputDeviceManager::connectInputDevice(QString /*aDeviceName*/, SerialPortSettings /*aSerialportSetting*/)
 {
 
 }

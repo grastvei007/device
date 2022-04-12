@@ -11,7 +11,7 @@ Atmega::Atmega() : Device()
 }
 
 
-void Atmega::dataRead(QByteArray aData)
+void Atmega::dataRead(QByteArray /*aData*/)
 {
 
 }
