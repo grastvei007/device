@@ -36,7 +36,12 @@ public:
         eTimeSinceFullCharge, // H9 sec
         eAmoutDischargedEnergy, // H17 0.01Kwh
         eAmountChargedEnergy, // H18 0.01Kwh
-        ePanelPower // PPV
+        eYieldToday, // H20 0.01 KWh
+        eMaximumPowerToday, // H21 W
+        eYieldYesterDay, // H22 0.01 KWh
+        eMaximumPowerYesterday, // H23 W
+        ePanelPower, // PPV mV
+        ePanelVoltage // VPV mV
     };
 
     VictronEnergy();
