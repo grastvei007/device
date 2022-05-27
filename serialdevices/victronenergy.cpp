@@ -280,6 +280,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
             break;
         }
         case eSoc: // SOC
+        case eInverterOutAmphere:
         {
             Tag* tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble);
             double val = aValue.toInt() / 10.0;
@@ -287,6 +288,16 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
             TagSocket* tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
             tagsocket->hookupTag(tag);
             mTagsockets[aName] = tagsocket;
+            break;
+        }
+        case eInverterOutputVoltage:
+        {
+            Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble);
+            double val = aValue.toDouble() / 100.0;
+            tag->setValue(val);
+            TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
+            socket->hookupTag(tag);
+            mTagsockets[aName] = socket;
             break;
         }
         case eTimeToGo: //TTG
@@ -350,6 +361,10 @@ VictronEnergy::Value VictronEnergy::stringToValue(const QString &aString) const
         return ePanelPower;
     else if(aString == "VPV")
         return ePanelVoltage;
+    else if(aString == "AC_OUT_V")
+        return eInverterOutputVoltage;
+    else if(aString == "AC_OUT_I")
+        return eInverterOutAmphere;
 
     return eNone;
 }

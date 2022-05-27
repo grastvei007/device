@@ -41,7 +41,9 @@ public:
         eYieldYesterDay, // H22 0.01 KWh
         eMaximumPowerYesterday, // H23 W
         ePanelPower, // PPV mV
-        ePanelVoltage // VPV mV
+        ePanelVoltage, // VPV mV
+        eInverterOutputVoltage, // AC_OUT_V 0.01V
+        eInverterOutAmphere // AC_OUT_I 0.1A
     };
 
     VictronEnergy();
