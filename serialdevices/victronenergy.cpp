@@ -312,11 +312,11 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         }
         case eNone:
         {
-            Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eString);
-            tag->setValue(aValue);
-            TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eString);
-            socket->hookupTag(tag);
-            mTagsockets[aName] = socket;
+//            Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eString);
+//            tag->setValue(aValue);
+//            TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eString);
+//            socket->hookupTag(tag);
+//            mTagsockets[aName] = socket;
             break;
         }
     }
