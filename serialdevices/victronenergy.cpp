@@ -219,6 +219,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
     switch (stringToValue(aName))
     {
         case ePower:
+        case ePanelPower: //PPV
         {
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eInt);
             int value = aValue.toInt();
@@ -258,7 +259,6 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         case eAmountChargedEnergy: // H18 0.01Kwh
         case eYieldToday: // H20 0.01 KWh
         case eYieldYesterDay: // H22 0.01 KWh
-        case ePanelPower: //PPV
         {
             auto tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble);
             double val = aValue.toDouble() * 10; // W
