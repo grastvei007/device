@@ -235,7 +235,6 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         case eDepthLastDischarge: // H2 mAh
         case eCumulativeAmpHoursDrawn: // H6 mAh
         case ePanelVoltage: // VPV mV
-        case ePanelPower: //PPV
         {
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble);
             double val = aValue.toInt() / 1000.0;
@@ -259,6 +258,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         case eAmountChargedEnergy: // H18 0.01Kwh
         case eYieldToday: // H20 0.01 KWh
         case eYieldYesterDay: // H22 0.01 KWh
+        case ePanelPower: //PPV
         {
             auto tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble);
             double val = aValue.toDouble() * 10; // W
