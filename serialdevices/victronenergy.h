@@ -57,6 +57,7 @@ private:
     void putValuesOnTags();
     QString pidToDeviceName(const QString &aPid);
     void createTagSocket(const QString &aName, const QString &aValue);
+    QString descriptionForValue(Value value);
 
     int mChecksum;
     QByteArray mFrame;

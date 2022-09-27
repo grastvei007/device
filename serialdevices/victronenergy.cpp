@@ -322,6 +322,54 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
     }
 }
 
+QString VictronEnergy::descriptionForValue(Value value)
+{
+    switch (value) {
+        case eVoltage: // V
+            return "Main battery voltage";
+        case eAmphere: // I
+            return "Battery current";
+        case ePower: // P
+            return "Instantaneous power";
+        case eSoc: // SOC
+            return "State-of-charge";
+        case eTimeToGo: //TTG
+            return "Time-to-go";
+        case eConsumedAmpHours: // CE, mAh
+            return "Consumed Amp hours";
+        case eDepthDepestDischarge: // H1, mAh
+            return "Depth of the deepest discharge";
+        case eDepthLastDischarge: // H2 mAh
+            return "Depth of last discharge";
+        case eCumulativeAmpHoursDrawn: // H6 mAh
+            return "Cumulative Amp hours drawn";
+        case eTimeSinceFullCharge: // H9 sec
+            return "Number of seconds since last full charge";
+        case eAmoutDischargedEnergy: // H17 0.01Kwh
+            return "Amount of discharged energy";
+        case eAmountChargedEnergy: // H18 0.01Kwh
+            return "Amount of charged energy";
+        case eYieldToday: // H20 0.01 KWh
+            return "Yield today";
+        case eMaximumPowerToday: // H21 W
+            return "Maximum power today";
+        case eYieldYesterDay: // H22 0.01 KWh
+            return "Yield yesteday";
+        case eMaximumPowerYesterday: // H23 W
+            return "Maximum power yesterday";
+        case ePanelPower: // PPV mV
+            return "Panel power";
+        case ePanelVoltage: // VPV mV
+            return "Panel voltage";
+        case eInverterOutputVoltage: // AC_OUT_V 0.01V
+            return "AC output voltage";
+        case eInverterOutAmphere: // AC_OUT_I 0.1A
+            return "AC output power";
+    default:
+        return QString();
+    }
+}
+
 
 VictronEnergy::Value VictronEnergy::stringToValue(const QString &aString) const
 {
