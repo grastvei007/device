@@ -219,7 +219,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
     if(mProductName.size() < 2)
         return;
 
-    auto description = descriptionForValue(stringToValue(aValue));
+    auto description = descriptionForValue(stringToValue(aName));
     switch (stringToValue(aName))
     {
         case ePower:
