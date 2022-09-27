@@ -539,6 +539,58 @@ VictronEnergy::Value VictronEnergy::stringToValue(const QString &aString) const
         return eInverterOutputVoltage;
     else if(aString == "AC_OUT_I")
         return eInverterOutAmphere;
+    else if(aString == "VS")
+        return eVoltageStarterBattery; // VS mV
+    else if(aString == "VM")
+        return eMidpintVoltage; // VM
+    else if(aString == "DM")
+        return eMidpointDeviation; // DM %%
+    else if(aString == "IL")
+        return eLoadCurrent; // IL, mA
+    else if(aString == "T")
+        return eTemperature; // T, c
+    else if(aString == "Alarm")
+        return eAlarm; // alarm
+    else if(aString == "Relay")
+        return eRelay; // Relay
+    else if(aString == "H3")
+        return eDepthAverageDischarge; // H3 maH
+    else if(aString == "H4")
+        return eNumberChargeCycles; // H4
+    else if(aString == "H5")
+        return eNumberFullDischarges; // H5
+    else if(aString == "H7")
+        return eMinVoltageMainBattery; //H7 mV
+    else if(aString == "H8")
+        return eMaxVoltageMainBattery; // H8 mV
+    else if(aString == "H10")
+        return eNumberAutomaticSyncronizations; // H10
+    else if(aString == "H11")
+        return eNumberAlarmsLowVoltageMainBattery; // H11
+    else if(aString == "H12")
+        return eNumberAlarmsHighVoltageMainBattery; // H12
+    else if(aString == "H13")
+        return eNumberAlarmsLowVoltageAuxBattery; // H13
+    else if(aString == "H14")
+        return eNumberAlarmsHighVoltageAuxBattery; // H14
+    else if(aString == "H15")
+        return eMinVoltageAuxBattery; // H15
+    else if(aString == "H16")
+        return eMaxVoltageAuxBattery; // H16
+    else if(aString == "H19")
+        return eYieldTotal; // H19 0.01 KwH
+    else if(aString == "ERR")
+        return eErrorCode; // ERR
+    else if(aString == "CS")
+        return eStateOfOperation; // CS
+    else if(aString =="FW")
+        return eFirmwareVersioin; // FW, string
+    else if(aString =="#SER")
+        return eSerialNumber; // #SER, string
+    else if(aString =="HSDS")
+        return eDay; // HSDS, int
+    else if(aString =="MODE")
+        return eDeviceMode; // MODE, int
 
     return eNone;
 }
