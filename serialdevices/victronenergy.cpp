@@ -290,7 +290,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         {
             int value = aValue.toInt();
             auto tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eInt, value, description);
-            TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
+            TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eInt);
             socket->hookupTag(tag);
             mTagsockets[aName] = socket;
             break;
@@ -318,7 +318,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         {
             int value = aValue.toInt();
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eInt, value, description);
-            TagSocket *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
+            TagSocket *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eInt);
             tagsocket->hookupTag(tag);
             mTagsockets[aName] = tagsocket;
             break;
