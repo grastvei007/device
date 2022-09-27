@@ -222,6 +222,16 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
     {
         case ePower:
         case ePanelPower: //PPV
+        case eMidpointDeviation: // DM %%
+        case eTemperature: // T, c
+        case eNumberChargeCycles: // H4
+        case eNumberFullDischarges: // H5
+        case eNumberAutomaticSyncronizations: // H10
+        case eNumberAlarmsLowVoltageMainBattery: // H11
+        case eNumberAlarmsHighVoltageMainBattery: // H12
+        case eNumberAlarmsLowVoltageAuxBattery: // H13
+        case eNumberAlarmsHighVoltageAuxBattery: // H14
+        case eDay: // HSDS, int
         {
             int value = aValue.toInt();
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eInt, value, description);
@@ -237,6 +247,14 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         case eDepthLastDischarge: // H2 mAh
         case eCumulativeAmpHoursDrawn: // H6 mAh
         case ePanelVoltage: // VPV mV
+        case eVoltageStarterBattery: // VS mV
+        case eMidpintVoltage: // VM
+        case eLoadCurrent: // IL, mA
+        case eDepthAverageDischarge: // H3 maH
+        case eMinVoltageMainBattery: //H7 mV
+        case eMaxVoltageMainBattery: // H8 mV
+        case eMinVoltageAuxBattery: // H15
+        case eMaxVoltageAuxBattery: // H16
         {
             double value = aValue.toInt() / 1000.0;
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
@@ -258,6 +276,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         case eAmountChargedEnergy: // H18 0.01Kwh
         case eYieldToday: // H20 0.01 KWh
         case eYieldYesterDay: // H22 0.01 KWh
+        case eYieldTotal: // H19 0.01 KwH
         {
             double value = aValue.toDouble() * 10; // W
             auto tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
@@ -300,6 +319,36 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
             int value = aValue.toInt();
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eInt, value, description);
             TagSocket *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
+            tagsocket->hookupTag(tag);
+            mTagsockets[aName] = tagsocket;
+            break;
+        }
+        case eAlarm: // alarm
+        case eRelay: // Relay
+        case eErrorCode: // ERR
+        case eFirmwareVersioin: // FW, string
+        case eSerialNumber: // #SER, string
+        {
+            Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eString, aValue, description);
+            TagSocket *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eString);
+            tagsocket->hookupTag(tag);
+            mTagsockets[aName] = tagsocket;
+            break;
+        }
+        case eStateOfOperation: // CS
+        {
+            auto value = StateOfOperationToString(aValue.toInt());
+            Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eString, value, description);
+            TagSocket *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eString);
+            tagsocket->hookupTag(tag);
+            mTagsockets[aName] = tagsocket;
+            break;
+        }
+        case eDeviceMode: // MODE, int
+        {
+            auto value = deviceModeToString(aValue.toInt());
+            Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eString, value, description);
+            TagSocket *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eString);
             tagsocket->hookupTag(tag);
             mTagsockets[aName] = tagsocket;
             break;
@@ -354,9 +403,95 @@ QString VictronEnergy::descriptionForValue(Value value)
             return "AC output voltage";
         case eInverterOutAmphere: // AC_OUT_I 0.1A
             return "AC output power";
+
+        case eVoltageStarterBattery:
+            return "Voltage Aux battery";
+        case eMidpintVoltage:
+            return "Mid-point Voltage Battery";
+        case eMidpointDeviation:
+            return "Mid-point deviation Battery";
+        case eLoadCurrent:
+            return "Load Current";
+        case eTemperature:
+            return "Battery temperature";
+        case eAlarm:
+            return "Alarm condition active";
+        case eRelay:
+            return "Relay state";
+        case eDepthAverageDischarge:
+            return "Depth of the average discharge";
+        case eNumberChargeCycles:
+            return "Number of charge cycles";
+        case eNumberFullDischarges:
+            return "Number of full discharges";
+        case eMinVoltageMainBattery:
+            return "Minimum Voltage Battery";
+        case eMaxVoltageMainBattery:
+            return "Maximum Voltage Battery";
+        case eNumberAutomaticSyncronizations:
+            return "Number og automatic syncronizations";
+        case eNumberAlarmsLowVoltageMainBattery:
+            return "Number of low Voltage Alarms, Battery";
+        case eNumberAlarmsHighVoltageMainBattery:
+            return "Number of high Voltage Alarms, Battery";
+        case eNumberAlarmsLowVoltageAuxBattery:
+            return "Number of low Voltage Alarms, Aux Battery";
+        case eNumberAlarmsHighVoltageAuxBattery:
+            return "Number of high Voltage Alarms, Aux Battery";
+        case eMinVoltageAuxBattery:
+            return "Minimum Voltage Aux Battery";
+        case eMaxVoltageAuxBattery:
+            return "Maximum Voltage Aux Battery";
+        case eYieldTotal:
+            return "Yield total";
+        case eErrorCode:
+            return "Error code";
+        case eStateOfOperation:
+            return "State of operation";
+        case eFirmwareVersioin:
+            return "Firmware version";
+        case eSerialNumber:
+            return "Serial number";
+        case eDay:
+            return "Day (0-364)";
+        case eDeviceMode:
+            return "Device mode";
     default:
         return QString();
     }
+}
+
+QString VictronEnergy::StateOfOperationToString(int cs)
+{
+    if(cs == 0)
+        return "Off";
+    else if(cs == 1)
+        return "Low power";
+    else if(cs == 2)
+        return "Fault";
+    else if(cs == 3)
+        return "Bulk";
+    else if(cs == 4)
+        return "Absorption";
+    else if(cs == 5)
+        return "Float";
+    else if(cs == 9)
+        return "Inverting";
+    else
+        return "Unknown state";
+
+}
+
+QString VictronEnergy::deviceModeToString(int mode)
+{
+    if(mode == 2)
+        return "MODE INVERTER";
+    else if(mode == 4)
+        return "MODE OFF";
+    else if(mode == 5)
+        return "MODE ECO";
+    else
+        return QString();
 }
 
 
