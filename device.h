@@ -40,9 +40,6 @@ signals:
     void deviceAboutToBeDestroyd(Device*);
     void ready(); ///< device is open.
     void errorOpen();
-    //data signals, key/value
-    void intValueReady(QString, int);
-    void doubleValueReady(QString, double);
 
 public slots:
     void closeSerialPort();
