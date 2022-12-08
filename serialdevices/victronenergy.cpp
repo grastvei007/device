@@ -585,7 +585,7 @@ VictronEnergy::Value VictronEnergy::stringToValue(const QString &aString) const
         return eStateOfOperation; // CS
     else if(aString =="FW")
         return eFirmwareVersioin; // FW, string
-    else if(aString =="#SER")
+    else if(aString =="SER#")
         return eSerialNumber; // #SER, string
     else if(aString =="HSDS")
         return eDay; // HSDS, int
