@@ -103,12 +103,29 @@ void VictronEnergy::recordFrame(char c)
         else
         {
             qDebug() << "Device name: " << mProductName;
-            if(mReadFrame.contains("PID") && (mProductName.size() < 2))
+            if(mReadFrame.contains("PID") && !hasPid_)
             {
                 QString pid = mReadFrame["PID"];
                 mProductName = pidToDeviceName(pid);
+                if(hasSerialNumber_)
+                    mProductName.append("_" + serialNumber_);
+                if(!mProductName.contains("MPPT"))
+                    hasSerialNumber_ = true; // serial number NA
+
+                hasPid_ = true;
             }
-            else
+            if(mReadFrame.contains("SER#") && !hasSerialNumber_)
+            {
+                auto serialNumber = "_" + mReadFrame["SER#"];
+                mProductName.append(serialNumber);
+
+                if(hasPid_)
+                    mProductName.append("_" + serialNumber_);
+
+                hasSerialNumber_ = true;
+            }
+
+            else if(hasSerialNumber_ && hasPid_)
                 putValuesOnTags();
         }
         mChecksum = 0;
@@ -176,6 +193,8 @@ QString VictronEnergy::pidToDeviceName(const QString &aPid)
     qDebug() << "Pid: " << aPid;
     if(aPid.contains("0XA381"))
         return QString("BMV712_Smart");
+    else if(aPid.contains("0X203"))
+        return "BMV700";
     else if(aPid.contains("0XA053"))
         return QString("MPPT75|15");
     else if(aPid.contains("0XA054"))

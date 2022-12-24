@@ -88,6 +88,10 @@ private:
     QString deviceModeToString(int mode);
 
     int mChecksum;
+    bool hasSerialNumber_ = false;
+    bool hasPid_ = false;
+    QString serialNumber_;
+
     QByteArray mFrame;
     State mState;
     QString mName;
