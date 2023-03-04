@@ -195,6 +195,8 @@ QString VictronEnergy::pidToDeviceName(const QString &aPid)
         return QString("BMV712_Smart");
     else if(aPid.contains("0X203"))
         return "BMV700";
+    else if(aPid.contains("0X204"))
+        return "BMV702";
     else if(aPid.contains("0XA053"))
         return QString("MPPT75|15");
     else if(aPid.contains("0XA054"))
@@ -223,7 +225,7 @@ QString VictronEnergy::pidToDeviceName(const QString &aPid)
         return QString("MPPT100|20");
     else if(aPid.contains("0XA060"))
         return QString("MPPT100|20_48V");
-    else if(aPid.contains("0XA061"))
+    else if(aPid.contains("0XA061") || aPid.contains("0XA06A"))
         return QString("MPPT150|45");
     else if(aPid.contains("0XA062"))
         return QString("MPPT150|60");
