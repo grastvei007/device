@@ -232,6 +232,39 @@ QString VictronEnergy::pidToDeviceName(const QString &aPid)
     else if(aPid.contains("0XA063"))
         return QString("MPPT150|70");
 
+    // Phoenix inverters 250V
+    else if(aPid.contains("0XA231"))
+        return "Phoenix Inverter 12V 250VA";
+    else if(aPid.contains("0XA232"))
+        return "Phoenix Inverter 24V 250VA";
+    else if(aPid.contains("0XA234"))
+        return "Phoenix Inverter 48V 250VA";
+    else if(aPid.contains("0XA241"))
+        return "Phoenix Inverter 12V 375VA";
+    else if(aPid.contains("0XA242"))
+        return "Phoenix Inverter 24V 375VA";
+    else if(aPid.contains("0XA244"))
+        return "Phoenix Inverter 48V 375VA";
+    else if(aPid.contains("0XA251"))
+        return "Phoenix Inverter 12V 500VA";
+    else if(aPid.contains("0XA252"))
+        return "Phoenix Inverter 24V 500VA";
+    else if(aPid.contains("0XA254"))
+        return "Phoenix Inverter 48V 500VA";
+    else if(aPid.contains("0XA261"))
+        return "Phoenix Inverter 12V 800VA";
+    else if(aPid.contains("0XA262"))
+        return "Phoenix Inverter 24V 800VA";
+    else if(aPid.contains("0XA264"))
+        return "Phoenix Inverter 48V 800VA";
+
+    else if(aPid.contains("0XA271"))
+        return "Phoenix Inverter 12V 1200VA";
+    else if(aPid.contains("0XA272"))
+        return "Phoenix Inverter 24V 1200VA";
+    else if(aPid.contains("0XA274"))
+        return "Phoenix Inverter 48V 1200VA";
+
     return aPid;
 }
 
