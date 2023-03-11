@@ -7,7 +7,7 @@
 
 #include "../device.h"
 
-#include <tagsystem/tagsocket.h>
+#include <tagsystem/tag.h>
 
 class VictronEnergy : public Device
 {
@@ -97,7 +97,7 @@ private:
     QString mName;
     QString mValue;
     QMap<QString, QString> mReadFrame;
-    QMap<QString, TagSocket*> mTagsockets;
+    QMap<QString, Tag*> tags_;
     QString mProductName;
 };
 
