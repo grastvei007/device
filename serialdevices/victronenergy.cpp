@@ -148,21 +148,21 @@ void VictronEnergy::putValuesOnTags()
             auto tagsocket = tagsockets_[iter.key()];
             switch (tagsocket->getType())
             {
-                case TagSocket::eInt:
+                case Tag::eInt:
                 {
                     int value = iter.value().toInt();
-                    tagsocket->writeValue(value);
+                    tag->setValue(value);
                     break;
                 }
-            case TagSocket::eDouble:
+            case Tag::eDouble:
             {
                 double value = iter.value().toDouble();
                 tagsocket->writeValue(value);
                 break;
             }
-            case TagSocket::eString:
+            case Tag::eString:
             {
-                tagsocket->writeValue(iter.value());
+                tag->setValue(iter.value());
                 break;
             }
             case TagSocket::eBool:
