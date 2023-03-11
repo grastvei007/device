@@ -156,7 +156,7 @@ void VictronEnergy::putValuesOnTags()
                 }
             case TagSocket::eDouble:
             {
-                double value = iter.value().toDouble() / 1000.0;
+                double value = iter.value().toDouble();
                 tagsocket->writeValue(value);
                 break;
             }
@@ -314,6 +314,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         {
             double value = aValue.toInt() / 1000.0;
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
+            tag->setScaleFactor(0.001);
             TagSocket *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
             tagsocket->hookupTag(tag);
             mTagsockets[aName] = tagsocket;
@@ -336,6 +337,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         {
             double value = aValue.toDouble() * 10; // W
             auto tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
+            tag->setScaleFactor(0.1);
             TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
             socket->hookupTag(tag);
             mTagsockets[aName] = socket;
@@ -356,6 +358,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         {
             double value = aValue.toInt() / 10.0;
             Tag* tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
+            tag->setScaleFactor(0.1);
             TagSocket* tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
             tagsocket->hookupTag(tag);
             mTagsockets[aName] = tagsocket;
@@ -365,6 +368,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         {
             double value = aValue.toDouble() / 100.0;
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
+            tag->setScaleFactor(0.01);
             TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
             socket->hookupTag(tag);
             mTagsockets[aName] = socket;
