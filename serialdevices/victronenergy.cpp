@@ -143,30 +143,31 @@ void VictronEnergy::putValuesOnTags()
     {
         if(iter.key() == "PID")
             continue;
-        if(tags_.contains(iter.key()))
+        if(tagsockets_.contains(iter.key()))
         {
-            auto tag = tags_[iter.key()];
-            switch (tag->getType())
+            auto tagsocket = tagsockets_[iter.key()];
+            switch (tagsocket->getType())
             {
-                case Tag::eInt:
+                case TagSocket::eInt:
                 {
                     int value = iter.value().toInt();
-                    tag->setValue(value);
+                    tagsocket->writeValue(value);
                     break;
                 }
-            case Tag::eDouble:
+            case TagSocket::eDouble:
             {
                 double value = iter.value().toDouble();
-                tag->setValue(value);
+                tagsocket->writeValue(value);
                 break;
             }
-            case Tag::eString:
+            case TagSocket::eString:
             {
-                tag->setValue(iter.value());
+                tagsocket->writeValue(iter.value());
                 break;
             }
-            case Tag::eBool:
-            case Tag::eTime:
+            case TagSocket::eBool:
+            case TagSocket::eTime:
+            case TagSocket::eNone:
                 break;
             }
         }
@@ -291,7 +292,9 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         {
             int value = aValue.toInt();
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eInt, value, description);
-            tags_[aName] = tag;
+            auto *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eInt);
+            tagsocket->hookupTag(tag);
+            tagsockets_[aName] = tagsocket;
             break;
         }
         case eVoltage:
@@ -310,17 +313,21 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         case eMinVoltageAuxBattery: // H15
         case eMaxVoltageAuxBattery: // H16
         {
-            double value = aValue.toInt() / 1000.0;
+            double value = aValue.toInt();
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
-            tag->setScaleFactor(0.001);
-            tags_[aName] = tag;
+            TagSocket *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
+            tagsocket->setScaleValue(0.001);
+            tagsocket->hookupTag(tag);
+            tagsockets_[aName] = tagsocket;
             break;
         }
         case eTimeSinceFullCharge: // H9 sec
         {
             int value = aValue.toInt();
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eInt, value, description);
-            tags_[aName] = tag;
+            auto *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eInt);
+            tagsocket->hookupTag(tag);
+            tagsockets_[aName] = tagsocket;
             break;
         }
         case eAmoutDischargedEnergy: // H17 0.01Kwh
@@ -329,10 +336,12 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         case eYieldYesterDay: // H22 0.01 KWh
         case eYieldTotal: // H19 0.01 KwH
         {
-            double value = aValue.toDouble() * 10; // W
+            double value = aValue.toDouble(); // W
             auto tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
-            tag->setScaleFactor(0.1);
-            tags_[aName] = tag;
+            TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
+            socket->setScaleValue(10);
+            socket->hookupTag(tag);
+            tagsockets_[aName] = socket;
             break;
         }
         case eMaximumPowerToday: // H21 W
@@ -340,31 +349,39 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         {
             int value = aValue.toInt();
             auto tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eInt, value, description);
-            tags_[aName] = tag;
+            auto *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eInt);
+            tagsocket->hookupTag(tag);
+            tagsockets_[aName] = tagsocket;
             break;
         }
         case eSoc: // SOC
         case eInverterOutAmphere:
         {
-            double value = aValue.toInt() / 10.0;
+            double value = aValue.toInt();
             Tag* tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
-            tag->setScaleFactor(0.1);
-            tags_[aName] = tag;
+            TagSocket* tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
+            tagsocket->setScaleValue(0.1);
+            tagsocket->hookupTag(tag);
+            tagsockets_[aName] = tagsocket;
             break;
         }
         case eInverterOutputVoltage:
         {
-            double value = aValue.toDouble() / 100.0;
+            double value = aValue.toDouble();
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
-            tag->setScaleFactor(0.01);
-            tags_[aName] = tag;
+            TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
+            socket->setScaleValue(0.01);
+            socket->hookupTag(tag);
+            tagsockets_[aName] = socket;
             break;
         }
         case eTimeToGo: //TTG
         {
             int value = aValue.toInt();
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eInt, value, description);
-            tags_[aName] = tag;
+            auto *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eInt);
+            tagsocket->hookupTag(tag);
+            tagsockets_[aName] = tagsocket;
             break;
         }
         case eAlarm: // alarm
@@ -374,21 +391,27 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         case eSerialNumber: // #SER, string
         {
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eString, aValue, description);
-            tags_[aName] = tag;
+            auto *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eString);
+            tagsocket->hookupTag(tag);
+            tagsockets_[aName] = tagsocket;
             break;
         }
         case eStateOfOperation: // CS
         {
             auto value = StateOfOperationToString(aValue.toInt());
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eString, value, description);
-            tags_[aName] = tag;
+            auto *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eString);
+            tagsocket->hookupTag(tag);
+            tagsockets_[aName] = tagsocket;
             break;
         }
         case eDeviceMode: // MODE, int
         {
             auto value = deviceModeToString(aValue.toInt());
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eString, value, description);
-            tags_[aName] = tag;
+            auto *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eString);
+            tagsocket->hookupTag(tag);
+            tagsockets_[aName] = tagsocket;
             break;
         }
         case eNone:
