@@ -33,7 +33,7 @@ public:
         e115200
     };
 
-    static InputDeviceManager& sGetInstance();
+    InputDeviceManager();
 
     void ignoreSerialPort(QString aDeviceName);
 
@@ -54,9 +54,6 @@ signals:
     void inputDeviceConnected(QString aDeviceName); ///< The name of the input port.
     void inputDeviceDisconnected(QString aDeviceName);
     void inputDeviceAvailable(QString aDeviceName);
-
-private:
-    InputDeviceManager();
 
 private slots:
     void detectInputDevices(); ///< polling

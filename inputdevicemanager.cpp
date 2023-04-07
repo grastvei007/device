@@ -9,12 +9,6 @@
 #include "serialdevices/atmega.h"
 
 
-InputDeviceManager& InputDeviceManager::sGetInstance()
-{
-    static InputDeviceManager sInputDeviceManager;
-    return sInputDeviceManager;
-}
-
 
 InputDeviceManager::InputDeviceManager() :
     mDefaultSerialPortSettings(),
