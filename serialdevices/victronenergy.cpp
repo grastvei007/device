@@ -117,6 +117,8 @@ void VictronEnergy::recordFrame(char c)
             if(mReadFrame.contains("SER#") && !hasSerialNumber_)
             {
                 auto serialNumber = "_" + mReadFrame["SER#"];
+                if(serialNumber.contains("\r"))
+                    serialNumber = serialNumber.split("\r").first();
                 mProductName.append(serialNumber);
 
                 if(hasPid_)
