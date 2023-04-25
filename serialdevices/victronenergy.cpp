@@ -315,7 +315,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         case eMinVoltageAuxBattery: // H15
         case eMaxVoltageAuxBattery: // H16
         {
-            double value = aValue.toInt();
+            double value = aValue.toDouble();
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
             TagSocket *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
             tagsocket->setScaleValue(0.001);
@@ -359,7 +359,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         case eSoc: // SOC
         case eInverterOutAmphere:
         {
-            double value = aValue.toInt();
+            double value = aValue.toDouble();
             Tag* tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
             TagSocket* tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
             tagsocket->setScaleValue(0.1);
@@ -400,7 +400,7 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         }
         case eStateOfOperation: // CS
         {
-            auto value = StateOfOperationToString(aValue.toInt());
+            QString value = StateOfOperationToString(aValue.toInt());
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eString, value, description);
             auto *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eString);
             tagsocket->hookupTag(tag);
