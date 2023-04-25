@@ -315,10 +315,11 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         case eMinVoltageAuxBattery: // H15
         case eMaxVoltageAuxBattery: // H16
         {
-            double value = aValue.toDouble();
+            double scaleFactor = 0.001;
+            double value = aValue.toDouble() * scaleFactor;
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
             TagSocket *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
-            tagsocket->setScaleValue(0.001);
+            tagsocket->setScaleValue(scaleFactor);
             tagsocket->hookupTag(tag);
             tagsockets_[aName] = tagsocket;
             break;
@@ -338,10 +339,11 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         case eYieldYesterDay: // H22 0.01 KWh
         case eYieldTotal: // H19 0.01 KwH
         {
-            double value = aValue.toDouble(); // W
+            double scaleFactor = 10.0;
+            double value = aValue.toDouble() * scaleFactor; // W
             auto tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
             TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
-            socket->setScaleValue(10);
+            socket->setScaleValue(scaleFactor);
             socket->hookupTag(tag);
             tagsockets_[aName] = socket;
             break;
@@ -359,20 +361,22 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         case eSoc: // SOC
         case eInverterOutAmphere:
         {
-            double value = aValue.toDouble();
+            double scaleFactor = 0.1;
+            double value = aValue.toDouble() * scaleFactor;
             Tag* tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
             TagSocket* tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
-            tagsocket->setScaleValue(0.1);
+            tagsocket->setScaleValue(scaleFactor);
             tagsocket->hookupTag(tag);
             tagsockets_[aName] = tagsocket;
             break;
         }
         case eInverterOutputVoltage:
         {
-            double value = aValue.toDouble();
+            double scaleFactor = 0.01;
+            double value = aValue.toDouble() * scaleFactor;
             Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eDouble, value, description);
             TagSocket *socket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eDouble);
-            socket->setScaleValue(0.01);
+            socket->setScaleValue(scaleFactor);
             socket->hookupTag(tag);
             tagsockets_[aName] = socket;
             break;
