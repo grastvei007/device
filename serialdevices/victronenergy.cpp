@@ -87,7 +87,7 @@ void VictronEnergy::recordFrame(char c)
                 mValue.clear();
                 break;
 
-            case 'r':
+            case '\r':
                 break;
         default:
             mValue.append(c);
