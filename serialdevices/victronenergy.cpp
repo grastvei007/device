@@ -30,7 +30,11 @@ void VictronEnergy::dataRead(QByteArray aData)
 
 void VictronEnergy::recordFrame(char c)
 {
-    mChecksum += c;
+    if(c == ':' && mState != eRecordHex)
+        mState = eRecordHex;
+
+    if(mState != eRecordHex)
+        mChecksum += c;
 
     c = toupper(c);
 
@@ -96,7 +100,7 @@ void VictronEnergy::recordFrame(char c)
         break;
     }
     case eChecksum:
-
+    {
         int s = mChecksum % 256;
         if(s != 0)
             qDebug() << "Invalid frame, check: " << s;
@@ -133,6 +137,22 @@ void VictronEnergy::recordFrame(char c)
         mChecksum = 0;
         mState = eIdle;
         break;
+    }
+    case eRecordHex:
+    {
+        switch (c)
+        {
+        case '\n':
+            mChecksum = 0;
+            mState = eIdle;
+            break;
+
+        default:
+            break;
+        }
+        break;
+
+    }
 
     }
 }

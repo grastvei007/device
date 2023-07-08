@@ -19,7 +19,8 @@ public:
         eBegin,
         eName,
         eValue,
-        eChecksum
+        eChecksum,
+        eRecordHex
     };
     enum Value ///< values parsed from victron device.
     {
