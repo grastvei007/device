@@ -172,14 +172,18 @@ void VictronEnergy::putValuesOnTags()
             {
                 case TagSocket::eInt:
                 {
-                    int value = iter.value().toInt();
-                    tagsocket->writeValue(value);
+                    bool ok;
+                    int value = iter.value().toInt(&ok);
+                    if(ok)
+                        tagsocket->writeValue(value);
                     break;
                 }
             case TagSocket::eDouble:
             {
-                double value = iter.value().toDouble();
-                tagsocket->writeValue(value);
+                bool ok;
+                double value = iter.value().toDouble(&ok);
+                if(ok)
+                    tagsocket->writeValue(value);
                 break;
             }
             case TagSocket::eString:
@@ -195,7 +199,7 @@ void VictronEnergy::putValuesOnTags()
         }
         else
         {
-          createTagSocket(iter.key(), iter.value());
+            createTagSocket(iter.key(), iter.value());
         }
     }
 }
