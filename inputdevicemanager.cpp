@@ -69,38 +69,40 @@ void InputDeviceManager::detectInputDevices()
     if(mAvailableSerialPorts.isEmpty())
     {
         // make all ports available.
-        for(auto i = portNames.begin(); i != portNames.end(); ++i)
+        for(auto &portName : portNames)
         {
-            mAvailableSerialPorts.push_back(*i);
-            emit inputDeviceAvailable(*i);
+            mAvailableSerialPorts.push_back(portName);
+            emit inputDeviceAvailable(portName);
         }
         return;
     }
 
     // test to se if some ports has changed add/remove.
-    for(auto i = portNames.begin(); i != portNames.end(); ++i)
+    for(auto &port : portNames)
     {
-        if(!mAvailableSerialPorts.contains(*i))
+        if(!mAvailableSerialPorts.contains(port))
         {
-            mAvailableSerialPorts.push_back(*i);
-            emit inputDeviceAvailable(*i);
+            mAvailableSerialPorts.push_back(port);
+            emit inputDeviceAvailable(port);
         }
     }
     QStringList remove;
-    for(int i=0; i<mAvailableSerialPorts.size(); ++i)
+    for(auto &availablePort : mAvailableSerialPorts)
     {
-        if(!portNames.contains(mAvailableSerialPorts.at(i)))
-            remove.push_back(mAvailableSerialPorts.at(i));
+        if(!portNames.contains(availablePort))
+            remove.push_back(availablePort);
     }
 
-    for(auto i = remove.begin(); i != remove.end(); ++i)
+    // remove and disconnect from serial port
+    for(auto &deviceName : remove)
     {
-        mAvailableSerialPorts.removeAll(*i);
-        if(mConnectedInputDevices.contains(*i))
+        mAvailableSerialPorts.removeAll(deviceName);
+        if(mConnectedInputDevices.contains(deviceName))
         {
-            mConnectedInputDevices.remove(*i);
+            mConnectedInputDevices[deviceName]->deleteLater();
+            mConnectedInputDevices.remove(deviceName);
         }
-        emit inputDeviceDisconnected(*i);
+        emit inputDeviceDisconnected(deviceName);
     }
 
 }
