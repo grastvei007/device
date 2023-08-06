@@ -39,6 +39,7 @@ signals:
     void dataRecieved(QByteArray);
     void deviceAboutToBeDestroyd(Device*);
     void ready(); ///< device is open.
+    void deviceClosed();
     void errorOpen();
 
 public slots:

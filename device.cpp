@@ -74,10 +74,19 @@ void Device::handleError(QSerialPort::SerialPortError error)
     if (error == QSerialPort::ResourceError) {
         if(mWriteErrorMsg)
         {
+            qDebug() << "Error code: " << error << " "  << mSerialPort->errorString();
             mWriteErrorMsg = false;
-            QMessageBox::critical(nullptr, tr("Critical Error"), mSerialPort->errorString());
             closeSerialPort();
-            QTimer::singleShot(5000, [=](){mWriteErrorMsg = true;});
+            emit deviceClosed();
+            // do not spam error messages.
+            QTimer::singleShot(5000, [&](){mWriteErrorMsg = true;});
+        }
+    }
+    else
+    {
+        if(error != QSerialPort::NoError)
+        {
+            qDebug() << "Error code: " << error << " "  << mSerialPort->errorString();
         }
     }
 }
