@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QByteArray>
 #include <QMap>
+#include <map>
 
 #include "../device.h"
 
@@ -97,7 +98,7 @@ private:
     State mState;
     QString mName;
     QString mValue;
-    QMap<QString, QString> mReadFrame;
+    std::map<QString, QString> readFrame_;
     QMap<QString, TagSocket*> tagsockets_;
     QString mProductName;
 };

@@ -47,7 +47,7 @@ void VictronEnergy::recordFrame(char c)
             case '\n':
                 mName.clear();
                 mValue.clear();
-                mReadFrame.clear();
+                readFrame_.clear();
                 mState = eName;
                 break;
             case '\r':
@@ -85,7 +85,7 @@ void VictronEnergy::recordFrame(char c)
         switch (c)
         {
             case '\n':
-                mReadFrame[mName] = mValue;
+                readFrame_[mName] = mValue;
                 mState = eName;
                 mName.clear();
                 mValue.clear();
@@ -107,9 +107,9 @@ void VictronEnergy::recordFrame(char c)
         else
         {
             qDebug() << "Device name: " << mProductName;
-            if(mReadFrame.contains("PID") && !hasPid_)
+            if(readFrame_.contains("PID") && !hasPid_)
             {
-                QString pid = mReadFrame["PID"];
+                QString pid = readFrame_["PID"];
                 mProductName = pidToDeviceName(pid);
                 if(hasSerialNumber_)
                     mProductName.append("_" + serialNumber_);
@@ -118,9 +118,9 @@ void VictronEnergy::recordFrame(char c)
 
                 hasPid_ = true;
             }
-            if(mReadFrame.contains("SER#") && !hasSerialNumber_)
+            if(readFrame_.contains("SER#") && !hasSerialNumber_)
             {
-                auto serialNumber = "_" + mReadFrame["SER#"];
+                auto serialNumber = "_" + readFrame_["SER#"];
                 if(serialNumber.contains("\r"))
                     serialNumber = serialNumber.split("\r").first();
                 mProductName.append(serialNumber);
@@ -160,35 +160,34 @@ void VictronEnergy::recordFrame(char c)
 
 void VictronEnergy::putValuesOnTags()
 {
-
-    for(auto iter = mReadFrame.begin(); iter != mReadFrame.end(); ++iter)
+    for(const auto &[key, value] : readFrame_)
     {
-        if(iter.key() == "PID")
+        if (key == "PID")
             continue;
-        if(tagsockets_.contains(iter.key()))
+        if(tagsockets_.contains(key))
         {
-            auto tagsocket = tagsockets_[iter.key()];
+            auto tagsocket = tagsockets_[key];
             switch (tagsocket->getType())
             {
                 case TagSocket::eInt:
                 {
                     bool ok;
-                    int value = iter.value().toInt(&ok);
+                    int intValue = value.toInt(&ok);
                     if(ok)
-                        tagsocket->writeValue(value);
+                        tagsocket->writeValue(intValue);
                     break;
                 }
             case TagSocket::eDouble:
             {
                 bool ok;
-                double value = iter.value().toDouble(&ok);
+                double doubleValue = value.toDouble(&ok);
                 if(ok)
-                    tagsocket->writeValue(value);
+                    tagsocket->writeValue(doubleValue);
                 break;
             }
             case TagSocket::eString:
             {
-                tagsocket->writeValue(iter.value());
+                tagsocket->writeValue(value);
                 break;
             }
             case TagSocket::eBool:
@@ -199,7 +198,7 @@ void VictronEnergy::putValuesOnTags()
         }
         else
         {
-            createTagSocket(iter.key(), iter.value());
+            createTagSocket(key, value);
         }
     }
 }
