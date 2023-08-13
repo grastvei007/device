@@ -8,7 +8,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT += serialport gui
 
 TEMPLATE = lib
-CONFIG += c++14
+CONFIG += c++20
 DEFINES += DEVICE_LIBRARY
 
 release: TARGET = device
