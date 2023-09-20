@@ -107,7 +107,7 @@ void VictronEnergy::recordFrame(char c)
         else
         {
             qDebug() << "Device name: " << mProductName;
-            if(readFrame_.contains("PID") && !hasPid_)
+            if(readFrame_.count("PID") && !hasPid_)
             {
                 QString pid = readFrame_["PID"];
                 mProductName = pidToDeviceName(pid);
@@ -118,7 +118,7 @@ void VictronEnergy::recordFrame(char c)
 
                 hasPid_ = true;
             }
-            if(readFrame_.contains("SER#") && !hasSerialNumber_)
+            if(readFrame_.count("SER#") && !hasSerialNumber_)
             {
                 auto serialNumber = "_" + readFrame_["SER#"];
                 if(serialNumber.contains("\r"))
