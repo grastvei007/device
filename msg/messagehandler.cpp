@@ -27,7 +27,7 @@ MessageHandler::MessageHandler(Device *aDevice) :
     if(dynamic_cast<Atmega*>(aDevice))
     {
             mIsAtmega = true;
-            QTimer::singleShot(2000, [=](){
+            QTimer::singleShot(2000, [this](){
                 pollAtmegaDeviceName();
             });
     }
@@ -55,7 +55,7 @@ void MessageHandler::pollAtmegaDeviceName()
          return;
      }
      dynamic_cast<Atmega*>(mDevice)->requestDeviceName();
-     QTimer::singleShot(4000, [=](){
+     QTimer::singleShot(4000, [this](){
         pollAtmegaDeviceName();
         });
 }
