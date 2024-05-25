@@ -74,7 +74,7 @@ public:
         eDeviceMode, // MODE, int
     };
 
-    VictronEnergy();
+    VictronEnergy(QObject *parent = nullptr);
 
     int getPid() const override;
     void dataRead(QByteArray aData) override;

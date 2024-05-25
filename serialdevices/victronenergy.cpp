@@ -4,7 +4,8 @@
 
 #include <tagsystem/taglist.h>
 
-VictronEnergy::VictronEnergy() :
+VictronEnergy::VictronEnergy(QObject *parent) :
+    Device(parent),
     mChecksum(0),
     mState(eIdle),
     mProductName()

@@ -16,7 +16,7 @@ class Device : public QObject
 {
     Q_OBJECT
 public:
-    Device();
+    Device(QObject *parent = nullptr);
     virtual ~Device();
 
     virtual int getPid() const = 0;

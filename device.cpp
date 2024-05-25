@@ -7,7 +7,8 @@
 
 #include "serialportsettings.h"
 
-Device::Device() :
+Device::Device(QObject *parent) :
+    QObject(parent),
     mOverideDataReadFlag(false),
     mDataListenFlag(false),
     mName(),
