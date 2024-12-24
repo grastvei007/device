@@ -1,7 +1,6 @@
 #include "device.h"
 
 #include <QDebug>
-#include <QMessageBox>
 #include <QSerialPortInfo>
 #include <QTimer>
 
