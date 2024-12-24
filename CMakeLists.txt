@@ -49,8 +49,10 @@ target_link_libraries(device Qt6::SerialPort)
 
 target_include_directories(device INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_custom_command(TARGET device
-                   POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:device> $ENV{DEV_LIBS} )
+set_target_properties(device
+    PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/lib
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/bin
+)
 
 
