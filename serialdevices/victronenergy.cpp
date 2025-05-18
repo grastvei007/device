@@ -107,7 +107,6 @@ void VictronEnergy::recordFrame(char c)
             qDebug() << "Invalid frame, check: " << s;
         else
         {
-            qDebug() << "Device name: " << mProductName;
             if(readFrame_.count("PID") && !hasPid_)
             {
                 QString pid = readFrame_["PID"];
