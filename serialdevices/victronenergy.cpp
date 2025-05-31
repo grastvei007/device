@@ -260,36 +260,36 @@ QString VictronEnergy::pidToDeviceName(const QString &aPid)
 
     // Phoenix inverters 250V
     else if(aPid.contains("0XA231"))
-        return "Phoenix Inverter 12V 250VA";
+        return "PhoenixInverter12V250VA";
     else if(aPid.contains("0XA232"))
-        return "Phoenix Inverter 24V 250VA";
+        return "PhoenixInverter24V250VA";
     else if(aPid.contains("0XA234"))
-        return "Phoenix Inverter 48V 250VA";
+        return "PhoenixInverter48V250VA";
     else if(aPid.contains("0XA241"))
-        return "Phoenix Inverter 12V 375VA";
+        return "PhoenixInverter12V375VA";
     else if(aPid.contains("0XA242"))
-        return "Phoenix Inverter 24V 375VA";
+        return "PhoenixInverter24V375VA";
     else if(aPid.contains("0XA244"))
-        return "Phoenix Inverter 48V 375VA";
+        return "PhoenixInverter48V375VA";
     else if(aPid.contains("0XA251"))
-        return "Phoenix Inverter 12V 500VA";
+        return "PhoenixInverter12V500VA";
     else if(aPid.contains("0XA252"))
-        return "Phoenix Inverter 24V 500VA";
+        return "PhoenixInverter24V500VA";
     else if(aPid.contains("0XA254"))
-        return "Phoenix Inverter 48V 500VA";
+        return "PhoenixInverter48V500VA";
     else if(aPid.contains("0XA261"))
-        return "Phoenix Inverter 12V 800VA";
+        return "PhoenixInverter12V800VA";
     else if(aPid.contains("0XA262"))
-        return "Phoenix Inverter 24V 800VA";
+        return "PhoenixInverter24V800VA";
     else if(aPid.contains("0XA264"))
-        return "Phoenix Inverter 48V 800VA";
+        return "PhoenixInverter48V800VA";
 
     else if(aPid.contains("0XA271"))
-        return "Phoenix Inverter 12V 1200VA";
+        return "PhoenixInverter12V1200VA";
     else if(aPid.contains("0XA272"))
-        return "Phoenix Inverter 24V 1200VA";
+        return "PhoenixInverter24V1200VA";
     else if(aPid.contains("0XA274"))
-        return "Phoenix Inverter 48V 1200VA";
+        return "PhoenixInverter48V1200VA";
 
     return aPid;
 }
