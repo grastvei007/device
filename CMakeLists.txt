@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(device)
 
-include_directories($ENV{JUNE_ROOT})
-link_directories($ENV{DEV_LIBS})
+link_directories(${CMAKE_BINARY_DIR}/$<CONFIG>/lib)
 
 set(CMAKE_INCLUDE_CURRENT_DIR "YES")
 set(CMAKE_AUTOMOC "YES")
