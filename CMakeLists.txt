@@ -41,6 +41,8 @@ qt_add_library(device SHARED
     serialdevices/atmega.cpp
     serialdevices/victronenergy.h
     serialdevices/victronenergy.cpp
+    serialdevices/bms123electric.h
+    serialdevices/bms123electric.cpp
 )
 
 target_link_libraries(device Qt6::Core)

@@ -7,6 +7,7 @@
 #include "serialportsettings.h"
 #include "serialdevices/victronenergy.h"
 #include "serialdevices/atmega.h"
+#include "serialdevices/bms123electric.h"
 
 
 
@@ -139,6 +140,14 @@ void InputDeviceManager::connectInputDevice(QString aDeviceName)
         ve->openDevice(settings);
         mConnectedInputDevices[aDeviceName] = ve;
         emit inputDeviceConnected(aDeviceName);
+    }
+    else if(manufacturer.contains("123electric"))
+    {
+        BMS123electric *bms = new BMS123electric();
+        bms->openDevice(settings);
+        mConnectedInputDevices[aDeviceName] = bms;
+        emit inputDeviceAvailable(aDeviceName);
+
     }
     else
     {
