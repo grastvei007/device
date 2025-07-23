@@ -146,7 +146,7 @@ void InputDeviceManager::connectInputDevice(QString aDeviceName)
         BMS123electric *bms = new BMS123electric();
         bms->openDevice(settings);
         mConnectedInputDevices[aDeviceName] = bms;
-        emit inputDeviceAvailable(aDeviceName);
+        emit inputDeviceConnected(aDeviceName);
 
     }
     else
@@ -173,13 +173,15 @@ void InputDeviceManager::disconnectInputDevice(QString aDeviceName)
     Device *device = getInputDevice(aDeviceName);
     if(!device)
         return;
+    QString serialPort = device->getPortName();
+    qDebug() << "Disconnect " << aDeviceName << " from port: " << serialPort;
+
     device->closeSerialPort();
     mConnectedInputDevices[aDeviceName]->deleteLater();
     mConnectedInputDevices[aDeviceName] = nullptr;
     mConnectedInputDevices.remove(aDeviceName);
     emit inputDeviceDisconnected(aDeviceName);
-    mAvailableSerialPorts.push_back(aDeviceName);
-    emit inputDeviceAvailable(aDeviceName);
+    mAvailableSerialPorts.push_back(serialPort);
 }
 
 
