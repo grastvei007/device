@@ -140,12 +140,12 @@ void BMS123electric::readStatusByte1()
 
     std::bitset<8> bitset(n);
 
-    statusTags_.allowToCharge->setValue(bitset[0]);
-    statusTags_.allowToDischarge->setValue(bitset[1]);
-    statusTags_.commError->setValue(bitset[2]);
-    statusTags_.exceedVmin->setValue(bitset[3]);
-    statusTags_.exceedVmax->setValue(bitset[4]);
-    statusTags_.exceedTmin->setValue(bitset[5]);
-    statusTags_.exceedTmax->setValue(bitset[6]);
-    statusTags_.socNotCalibrated->setValue(bitset[7]);
+    statusTags_.allowToCharge->setValue(static_cast<bool>(bitset[0]));
+    statusTags_.allowToDischarge->setValue(static_cast<bool>(bitset[1]));
+    statusTags_.commError->setValue(static_cast<bool>(bitset[2]));
+    statusTags_.exceedVmin->setValue(static_cast<bool>(bitset[3]));
+    statusTags_.exceedVmax->setValue(static_cast<bool>(bitset[4]));
+    statusTags_.exceedTmin->setValue(static_cast<bool>(bitset[5]));
+    statusTags_.exceedTmax->setValue(static_cast<bool>(bitset[6]));
+    statusTags_.socNotCalibrated->setValue(static_cast<bool>(bitset[7]));
 }
