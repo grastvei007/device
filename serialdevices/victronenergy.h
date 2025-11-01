@@ -86,8 +86,8 @@ private:
     QString pidToDeviceName(const QString &aPid);
     void createTagSocket(const QString &aName, const QString &aValue);
     QString descriptionForValue(Value value);
-    QString StateOfOperationToString(int cs);
-    QString deviceModeToString(int mode);
+    void setStateOfOperationEnumValuesToTag(Tag* tag);
+    void setDeviceModeEnumValuesToTag(Tag *tag);
 
     int mChecksum;
     bool hasSerialNumber_ = false;

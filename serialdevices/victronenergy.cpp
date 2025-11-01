@@ -192,6 +192,8 @@ void VictronEnergy::putValuesOnTags()
             }
             case TagSocket::eBool:
             case TagSocket::eTime:
+            //case TagSocket::eIntVector:
+            //case TagSocket::eDoubleVector:
             case TagSocket::eNone:
                 break;
             }
@@ -427,18 +429,18 @@ void VictronEnergy::createTagSocket(const QString &aName, const QString &aValue)
         }
         case eStateOfOperation: // CS
         {
-            QString value = StateOfOperationToString(aValue.toInt());
-            Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eString, value, description);
-            auto *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eString);
+            Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eInt, aValue.toInt(), description);
+            setStateOfOperationEnumValuesToTag(tag);
+            auto *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eInt);
             tagsocket->hookupTag(tag);
             tagsockets_[aName] = tagsocket;
             break;
         }
         case eDeviceMode: // MODE, int
         {
-            auto value = deviceModeToString(aValue.toInt());
-            Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eString, value, description);
-            auto *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eString);
+            Tag *tag = TagList::sGetInstance().createTag(mProductName, aName, Tag::eInt, aValue.toInt(), description);
+            setDeviceModeEnumValuesToTag(tag);
+            auto *tagsocket = TagSocket::createTagSocket(mProductName, aName, TagSocket::eInt);
             tagsocket->hookupTag(tag);
             tagsockets_[aName] = tagsocket;
             break;
@@ -551,37 +553,27 @@ QString VictronEnergy::descriptionForValue(Value value)
     }
 }
 
-QString VictronEnergy::StateOfOperationToString(int cs)
+void VictronEnergy::setStateOfOperationEnumValuesToTag(Tag* tag)
 {
-    if(cs == 0)
-        return "Off";
-    else if(cs == 1)
-        return "Low power";
-    else if(cs == 2)
-        return "Fault";
-    else if(cs == 3)
-        return "Bulk";
-    else if(cs == 4)
-        return "Absorption";
-    else if(cs == 5)
-        return "Float";
-    else if(cs == 9)
-        return "Inverting";
-    else
-        return "Unknown state";
+    Tag::EnumMap enumMap;
+    enumMap.emplace(0, "Off");
+    enumMap.emplace(1, "Low power");
+    enumMap.emplace(2, "Fault");
+    enumMap.emplace(3, "Bulk");
+    enumMap.emplace(4, "Absorption");
+    enumMap.emplace(5, "Float");
+    enumMap.emplace(9, "Inverting");
 
+    tag->setEnumValues(enumMap);
 }
 
-QString VictronEnergy::deviceModeToString(int mode)
+void VictronEnergy::setDeviceModeEnumValuesToTag(Tag* tag)
 {
-    if(mode == 2)
-        return "MODE INVERTER";
-    else if(mode == 4)
-        return "MODE OFF";
-    else if(mode == 5)
-        return "MODE ECO";
-    else
-        return QString();
+    Tag::EnumMap enumMap;
+    enumMap.emplace(2, "MODE_INVERTER");
+    enumMap.emplace(4, "MODE_OFF");
+    enumMap.emplace(5, "MODE_ECO");
+    tag->setEnumValues(enumMap);
 }
 
 
