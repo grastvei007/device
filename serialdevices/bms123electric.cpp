@@ -17,16 +17,16 @@ union convert
 BMS123electric::BMS123electric(QObject *parent) :
     Device(parent)
 {
-    totalVoltageTag_ = TagList::sGetInstance().createTag(deviceName_, "total_voltage", Tag::eDouble, 0.0, "Totale voltage of battery");
+    totalVoltageTag_ = TagList::sGetInstance().createTag(deviceName_, "total_voltage", TagType::eDouble, 0.0, "Totale voltage of battery");
 
-    statusTags_.allowToCharge = TagList::sGetInstance().createTag(deviceName_, "allow_to_charge", Tag::eBool, true, "Allow to charge battery");
-    statusTags_.allowToDischarge = TagList::sGetInstance().createTag(deviceName_, "allow_to_discharge", Tag::eBool, true, "Allow to discharge battery");
-    statusTags_.commError = TagList::sGetInstance().createTag(deviceName_, "comm_error", Tag::eBool, false, "Communication error");
-    statusTags_.exceedVmin = TagList::sGetInstance().createTag(deviceName_, "exceed_v_min", Tag::eBool, false, "Exceed min voltage");
-    statusTags_.exceedVmax = TagList::sGetInstance().createTag(deviceName_, "exceed_v_max", Tag::eBool, false, "Exceed max voltage");
-    statusTags_.exceedTmin = TagList::sGetInstance().createTag(deviceName_, "exceed_t_min", Tag::eBool, false, "Exceed min temperature");
-    statusTags_.exceedTmax = TagList::sGetInstance().createTag(deviceName_, "exceed_t_max", Tag::eBool, false, "Exceed max temperature");
-    statusTags_.socNotCalibrated = TagList::sGetInstance().createTag(deviceName_, "soc_not_calibrated", Tag::eBool, false, "soc not calibrated");
+    statusTags_.allowToCharge = TagList::sGetInstance().createTag(deviceName_, "allow_to_charge", TagType::eBool, true, "Allow to charge battery");
+    statusTags_.allowToDischarge = TagList::sGetInstance().createTag(deviceName_, "allow_to_discharge", TagType::eBool, true, "Allow to discharge battery");
+    statusTags_.commError = TagList::sGetInstance().createTag(deviceName_, "comm_error", TagType::eBool, false, "Communication error");
+    statusTags_.exceedVmin = TagList::sGetInstance().createTag(deviceName_, "exceed_v_min", TagType::eBool, false, "Exceed min voltage");
+    statusTags_.exceedVmax = TagList::sGetInstance().createTag(deviceName_, "exceed_v_max", TagType::eBool, false, "Exceed max voltage");
+    statusTags_.exceedTmin = TagList::sGetInstance().createTag(deviceName_, "exceed_t_min", TagType::eBool, false, "Exceed min temperature");
+    statusTags_.exceedTmax = TagList::sGetInstance().createTag(deviceName_, "exceed_t_max", TagType::eBool, false, "Exceed max temperature");
+    statusTags_.socNotCalibrated = TagList::sGetInstance().createTag(deviceName_, "soc_not_calibrated", TagType::eBool, false, "soc not calibrated");
 
     // cells are created on demand to allow use for different batteries.
 }
@@ -104,8 +104,8 @@ double BMS123electric::readCellVoltage(int cell)
     if(!cellTags_.contains(cell))
     {
         cellTags tags;
-        tags.voltage = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_voltage").arg(cell), Tag::eDouble, 0.0, QString("cell %1 voltage").arg(cell));
-        tags.temperature = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_temperature").arg(cell), Tag::eInt, 0, QString("cell %1 temperature").arg(cell));
+        tags.voltage = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_voltage").arg(cell), TagType::eDouble, 0.0, QString("cell %1 voltage").arg(cell));
+        tags.temperature = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_temperature").arg(cell), TagType::eInt, 0, QString("cell %1 temperature").arg(cell));
         cellTags_[cell] = tags;
     }
 
@@ -123,8 +123,8 @@ int BMS123electric::readCellTemperature(int cell)
     if(!cellTags_.contains(cell))
     {
         cellTags tags;
-        tags.voltage = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_voltage").arg(cell), Tag::eDouble, 0.0, QString("cell %1 voltage").arg(cell));
-        tags.temperature = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_temperature").arg(cell), Tag::eInt, 0, QString("cell %1 temperature").arg(cell));
+        tags.voltage = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_voltage").arg(cell), TagType::eDouble, 0.0, QString("cell %1 voltage").arg(cell));
+        tags.temperature = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_temperature").arg(cell), TagType::eInt, 0, QString("cell %1 temperature").arg(cell));
         cellTags_[cell] = tags;
     }
 

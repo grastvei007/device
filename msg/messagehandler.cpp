@@ -176,7 +176,7 @@ void MessageHandler::onDoubleValue(QString aKey, double aValue)
         mTagSockets[aKey]->writeValue(aValue);
     else
     {
-        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, Tag::eDouble);
+        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, TagType::eDouble);
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket(mDevice->getDeviceName(), aKey, TagSocket::eDouble);
         socket->hookupTag(tag);
@@ -195,7 +195,7 @@ void MessageHandler::onIntValue(QString aKey, int aValue)
         mTagSockets[aKey]->writeValue(aValue);
     else
     {
-        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, Tag::eInt);
+        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, TagType::eInt);
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket(mDevice->getDeviceName(), aKey, TagSocket::eInt);
         socket->hookupTag(tag);
@@ -216,7 +216,7 @@ void MessageHandler::onBoolValue(QString aKey, bool aValue)
     }
     else
     {
-        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, Tag::eBool);
+        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, TagType::eBool);
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket(mDevice->getDeviceName(), aKey, TagSocket::eBool);
         socket->hookupTag(tag);
@@ -238,7 +238,7 @@ void MessageHandler::onStringValue(QString aKey, QString aValue)
         mDevice->setDeviceName(aValue);
         mDeviceNameIsSet = true;
 
-        Tag *tag = TagList::sGetInstance().createTag("device", "name", Tag::eString);
+        Tag *tag = TagList::sGetInstance().createTag("device", "name", TagType::eString);
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket("device", "name", TagSocket::eString);
         socket->hookupTag(tag);
@@ -257,7 +257,7 @@ void MessageHandler::onStringValue(QString aKey, QString aValue)
         mTagSockets[aKey]->writeValue(aValue);
     else
     {
-        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, Tag::eString);
+        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, TagType::eString);
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket(mDevice->getDeviceName(), aKey, TagSocket::eString);
         socket->hookupTag(tag);
