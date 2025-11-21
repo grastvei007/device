@@ -7,54 +7,39 @@ MessageReader::MessageReader(QByteArray *aMessage) :
 
 }
 
-/**
- * @brief MessageReader::isValid
- *
- * Validated an array containing a message.
- *
- * @param aMsg
- * @return true/false.
- */
-bool MessageReader::isValid(QByteArray &aMsg, QString &rError)
+bool MessageReader::isValid(QByteArray &message, QString &rError)
 {
-    if(!aMsg.startsWith("<msg"))
-    {
+    if (!message.startsWith("<msg")) {
         rError.append("Message does not start with, <msg\n");
         return false;
     }
-    if(!aMsg.endsWith(">"))
-    {
+    if (!message.endsWith(">")) {
         rError.append("Message does not end with, >\n");
         return false;
     }
-    if(aMsg.size() < 10)
-    {
+    if (message.size() < 10) {
         rError.append("Message size is to small\n");
         return false;
     }
 
-
-    QString size(aMsg.mid(4,4));
+    QString size(message.mid(4, 2));
     int n = size.toInt();
-    if( aMsg.size() != n)
-    {
+    if (message.size() != n + 1) {
         rError.append("Message size is wrong\n");
         return false;
     }
-    int sum = 0;
-    for(int i=0; i<n; ++i)
-    {
-        if(i == n-2)
-            continue;
 
-        uint8_t c = (uint8_t)aMsg.at(i);
-        sum += c;
+    int sum = 0;
+    for (int i = 0; i < message.size(); ++i) {
+        if (i == message.size() - 2)
+            continue;
+        sum += (uint8_t) message[i];
     }
-    int r = sum % 255;
-    uint8_t t = (uint8_t)aMsg.at(n-2);
-    if(t != r)
-    {
-        rError.append(QString("Message checksum is wrong sum, %1, r=%2, cs=%3").arg(sum).arg(r).arg(t));
+
+    int r = (uint8_t) message[message.size() - 2];
+
+    if (sum % 256 != r) {
+        rError.append(QString("Message checksum is wrong sum, %1, r=%2, ").arg(sum).arg(sum % 256));
         return false;
     }
 

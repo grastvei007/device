@@ -56,4 +56,4 @@ set_target_properties(device
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/bin
 )
 
-
+add_subdirectory(tests)

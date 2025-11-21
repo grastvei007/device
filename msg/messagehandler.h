@@ -58,6 +58,8 @@ private:
     void parseData(QByteArray aMsg);
     void extractMessage();
     void parseAtmegaMessage(const Message &aMessage); ///< emits key, value signals.
+    void parseTagAndValue(const QByteArray &message);
+
 private:
     Device *mDevice;
     bool mIsAtmega;

@@ -10,12 +10,10 @@ Atmega::Atmega() : Device()
 
 }
 
-
-void Atmega::dataRead(QByteArray /*aData*/)
+void Atmega::dataRead(QByteArray aData)
 {
-
+    qDebug() << aData;
 }
-
 
 bool Atmega::isDeviceNameSet() const
 {
