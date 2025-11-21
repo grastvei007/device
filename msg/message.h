@@ -44,7 +44,7 @@ public:
 
     void finnish(); ///< prepare meassege to be transmited.
 
-    QByteArray getMessage() const; ///< get the message
+    const QByteArray &getMessage() const; ///< get the message
 
     QString getAtmegaDeviceName();
 private:

@@ -8,7 +8,7 @@
 Message::Message() :
     mIsValid(true)
 {
-    mMessage = "<msg0000";
+    mMessage = "<msg00";
 }
 
 
@@ -20,7 +20,7 @@ Message::Message(const QByteArray &aMsg) : mMessage(aMsg)
 
 Message::Message(const TagSocket &aTagSocket)
 {
-    mMessage = "<msg0000";
+    mMessage = "<msg00";
     QString key = aTagSocket.getName();
    /* switch (aTagSocket.getType()) {
     case TagSocket::eDouble:
@@ -136,7 +136,7 @@ void Message::finnish()
     QByteArray size = QString::number(mMessage.size()).toLatin1();
 
     int t = size.size();
-    for(int i=t; i<4; ++i)
+    for (int i = t; i < 2; ++i)
         size.prepend("0");
     qDebug() << "Message size: " << size << "t " << t;
     if(t > 4)
@@ -146,8 +146,7 @@ void Message::finnish()
     calcCheckcode();
 }
 
-
-QByteArray Message::getMessage() const
+const QByteArray &Message::getMessage() const
 {
     return mMessage;
 }
@@ -167,7 +166,7 @@ void Message::calcCheckcode()
             n += (int)mMessage.at(i);
     }
 
-    mMessage[mMessage.size()-2] = (char)(n % 255);
+    mMessage[mMessage.size() - 2] = (char) (n % 256);
 }
 
 

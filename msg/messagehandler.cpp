@@ -7,7 +7,9 @@
 
 #include "device.h"
 #include <msg/message.h>
+#include <tagsystem/tag.h>
 #include <tagsystem/taglist.h>
+#include <tagsystem/util/tagutil.h>
 
 #include "../serialdevices/atmega.h"
 #include "messagereader.h"
@@ -24,12 +26,9 @@ MessageHandler::MessageHandler(Device *aDevice) :
 {
     connect(mDevice, &Device::dataRecieved, this, &MessageHandler::onDeviceData);
     mDevice->setOverideDataRead(true);
-    if(dynamic_cast<Atmega*>(aDevice))
-    {
-            mIsAtmega = true;
-            QTimer::singleShot(2000, [this](){
-                pollAtmegaDeviceName();
-            });
+    if (dynamic_cast<Atmega *>(aDevice)) {
+        mIsAtmega = true;
+        //   QTimer::singleShot(2000, [this]() { pollAtmegaDeviceName(); });
     }
 
     connect(this, &MessageHandler::boolValue, this, &MessageHandler::onBoolValue);
@@ -41,7 +40,7 @@ MessageHandler::MessageHandler(Device *aDevice) :
 
 void MessageHandler::onDeviceData(QByteArray aData)
 {
-    //qDebug() << __FUNCTION__ <<   aData;
+    qDebug() << __FUNCTION__ << aData;
     mDataBuffer.append(aData);
     extractMessage();
 }
@@ -64,26 +63,70 @@ void MessageHandler::pollAtmegaDeviceName()
 void MessageHandler::parseData(QByteArray aMsg)
 {
     qDebug() << "Got message: " << aMsg;
-    Message msg(aMsg);
     QString error;
     if(!MessageReader::isValid(aMsg, error))
     {
         qDebug() << "Invalid message(" << error << ")!!!" ;
-
-       /* if(mIsAtmega && !dynamic_cast<Atmega*>(mDevice)->isDeviceNameSet())
-        {
-            QTimer::singleShot(4000, [=](){
-                dynamic_cast<Atmega*>(mDevice)->requestDeviceName();
-            });
-        }*/
         return;
     }
 
 
     if(mIsAtmega)
-        parseAtmegaMessage(msg);
+        parseTagAndValue(aMsg);
 }
 
+void MessageHandler::parseTagAndValue(const QByteArray &message)
+{
+    auto list = message.split(':');
+    auto tagbyte = list.first();
+    QString tagName(tagbyte.mid(6, tagbyte.size() - 6)); // tag start on index 6
+
+    auto value = list.last();
+    if (value.startsWith('i')) { // integer
+        union {
+            unsigned char byte[4];
+            int i;
+        } u;
+        u.byte[0] = value[1];
+        u.byte[1] = value[2];
+        u.byte[2] = value[3];
+        u.byte[3] = value[4];
+
+        Tag *tag = TagList::sGetInstance().findByTagName(tagName);
+        if (!tag) {
+            auto [subsystem, name] = util::tag::splitFullName(tagName);
+            tag = TagList::sGetInstance().createTag(subsystem, name, TagType::eInt, u.i);
+        } else
+            tag->setValue(u.i);
+    } else if (value.startsWith('f')) // float
+    {
+        union {
+            unsigned char byte[4];
+            double d;
+        } u;
+        u.byte[0] = value[1];
+        u.byte[1] = value[2];
+        u.byte[2] = value[3];
+        u.byte[3] = value[4];
+
+        Tag *tag = TagList::sGetInstance().findByTagName(tagName);
+        if (!tag) {
+            auto [subsystem, name] = util::tag::splitFullName(tagName);
+            tag = TagList::sGetInstance().createTag(subsystem, name, TagType::eDouble, u.d);
+        } else
+            tag->setValue(u.d);
+    } else if (value.startsWith('b')) {
+        bool b = (bool) value[1];
+        Tag *tag = TagList::sGetInstance().findByTagName(tagName);
+        if (!tag) {
+            auto [subsystem, name] = util::tag::splitFullName(tagName);
+            tag = TagList::sGetInstance().createTag(subsystem, name, TagType::eBool, b);
+        } else
+            tag->setValue(b);
+    }
+}
+
+// old protocol. deprecated?
 void MessageHandler::parseAtmegaMessage(const Message &aMessage)
 {
     std::cerr << __FUNCTION__ << " ";
@@ -146,22 +189,22 @@ void MessageHandler::extractMessage()
     int idx = mDataBuffer.indexOf("<msg");
     if(idx < 0)
     {
-        qDebug() << mDataBuffer;
+        //qDebug() << mDataBuffer;
         return;
     }
 
     if(mDataBuffer.size() < idx+8)
         return;
 
-    QString msgSize(mDataBuffer.mid(idx+4, 4));
+    QString msgSize(mDataBuffer.mid(idx + 4, 2));
     int size = msgSize.toInt();
 
     if(mDataBuffer.size() < idx+size)
         return;
 
     // buffer contains a message.
-    QByteArray message = mDataBuffer.mid(idx, size);
-    mDataBuffer.remove(0, idx+size);
+    QByteArray message = mDataBuffer.mid(idx, size + 1);
+    mDataBuffer.remove(0, idx + size + 1);
 
     parseData(message);
 }
