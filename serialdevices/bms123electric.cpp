@@ -104,8 +104,8 @@ double BMS123electric::readCellVoltage(int cell)
     if(!cellTags_.contains(cell))
     {
         cellTags tags;
-        tags.voltage = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_voltage").arg(cell), TagType::eDouble, 0.0, QString("cell %1 voltage").arg(cell));
-        tags.temperature = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_temperature").arg(cell), TagType::eInt, 0, QString("cell %1 temperature").arg(cell));
+		tags.voltage = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_voltage").arg(cell), TagType::eDouble, 0.0, QString("cell %1 voltage").arg(cell), false);
+		tags.temperature = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_temperature").arg(cell), TagType::eInt, 0, QString("cell %1 temperature").arg(cell), false);
         cellTags_[cell] = tags;
     }
 
@@ -123,8 +123,8 @@ int BMS123electric::readCellTemperature(int cell)
     if(!cellTags_.contains(cell))
     {
         cellTags tags;
-        tags.voltage = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_voltage").arg(cell), TagType::eDouble, 0.0, QString("cell %1 voltage").arg(cell));
-        tags.temperature = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_temperature").arg(cell), TagType::eInt, 0, QString("cell %1 temperature").arg(cell));
+		tags.voltage = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_voltage").arg(cell), TagType::eDouble, 0.0, QString("cell %1 voltage").arg(cell), false);
+		tags.temperature = TagList::sGetInstance().createTag(deviceName_, QString("cell_%1_temperature").arg(cell), TagType::eInt, 0, QString("cell %1 temperature").arg(cell), false);
         cellTags_[cell] = tags;
     }
 

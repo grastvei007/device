@@ -45,8 +45,16 @@ qt_add_library(device SHARED
     serialdevices/bms123electric.cpp
 )
 
-target_link_libraries(device Qt6::Core)
-target_link_libraries(device Qt6::SerialPort)
+target_link_libraries(device PRIVATE Qt6::Core
+    Qt6::SerialPort)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message("Debug mode")
+    target_link_libraries(device PRIVATE tagsystemd)
+else()
+    message("Release mode")
+    target_link_libraries(device PRIVATE tagsystem)
+endif()
 
 target_include_directories(device INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 

@@ -95,7 +95,7 @@ void MessageHandler::parseTagAndValue(const QByteArray &message)
         Tag *tag = TagList::sGetInstance().findByTagName(tagName);
         if (!tag) {
             auto [subsystem, name] = util::tag::splitFullName(tagName);
-            tag = TagList::sGetInstance().createTag(subsystem, name, TagType::eInt, u.i);
+			tag = TagList::sGetInstance().createTag(subsystem, name, TagType::eInt, u.i, false);
         } else
             tag->setValue(u.i);
     } else if (value.startsWith('f')) // float
@@ -112,7 +112,7 @@ void MessageHandler::parseTagAndValue(const QByteArray &message)
         Tag *tag = TagList::sGetInstance().findByTagName(tagName);
         if (!tag) {
             auto [subsystem, name] = util::tag::splitFullName(tagName);
-            tag = TagList::sGetInstance().createTag(subsystem, name, TagType::eDouble, u.d);
+			tag = TagList::sGetInstance().createTag(subsystem, name, TagType::eDouble, u.d, false);
         } else
             tag->setValue(u.d);
     } else if (value.startsWith('b')) {
@@ -120,7 +120,7 @@ void MessageHandler::parseTagAndValue(const QByteArray &message)
         Tag *tag = TagList::sGetInstance().findByTagName(tagName);
         if (!tag) {
             auto [subsystem, name] = util::tag::splitFullName(tagName);
-            tag = TagList::sGetInstance().createTag(subsystem, name, TagType::eBool, b);
+			tag = TagList::sGetInstance().createTag(subsystem, name, TagType::eBool, b, false);
         } else
             tag->setValue(b);
     }
@@ -219,7 +219,7 @@ void MessageHandler::onDoubleValue(QString aKey, double aValue)
         mTagSockets[aKey]->writeValue(aValue);
     else
     {
-        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, TagType::eDouble);
+		Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, TagType::eDouble, false);
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket(mDevice->getDeviceName(), aKey, TagSocket::eDouble);
         socket->hookupTag(tag);
@@ -238,7 +238,7 @@ void MessageHandler::onIntValue(QString aKey, int aValue)
         mTagSockets[aKey]->writeValue(aValue);
     else
     {
-        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, TagType::eInt);
+		Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, TagType::eInt, false);
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket(mDevice->getDeviceName(), aKey, TagSocket::eInt);
         socket->hookupTag(tag);
@@ -259,7 +259,7 @@ void MessageHandler::onBoolValue(QString aKey, bool aValue)
     }
     else
     {
-        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, TagType::eBool);
+		Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, TagType::eBool, false);
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket(mDevice->getDeviceName(), aKey, TagSocket::eBool);
         socket->hookupTag(tag);
@@ -281,7 +281,7 @@ void MessageHandler::onStringValue(QString aKey, QString aValue)
         mDevice->setDeviceName(aValue);
         mDeviceNameIsSet = true;
 
-        Tag *tag = TagList::sGetInstance().createTag("device", "name", TagType::eString);
+		Tag *tag = TagList::sGetInstance().createTag("device", "name", TagType::eString, false);
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket("device", "name", TagSocket::eString);
         socket->hookupTag(tag);
@@ -300,7 +300,7 @@ void MessageHandler::onStringValue(QString aKey, QString aValue)
         mTagSockets[aKey]->writeValue(aValue);
     else
     {
-        Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, TagType::eString);
+		Tag *tag = TagList::sGetInstance().createTag(mDevice->getDeviceName(), aKey, TagType::eString, false);
         tag->setValue(aValue);
         TagSocket *socket = TagSocket::createTagSocket(mDevice->getDeviceName(), aKey, TagSocket::eString);
         socket->hookupTag(tag);
